@@ -1,2 +1,3 @@
-ls
-ls
+# useful server commands
+
+git clone https://github.com/Brandon1126/DistributedMachineLearningPyTorch.git
