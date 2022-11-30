@@ -161,8 +161,8 @@ def load_train_objs():
 
 
 def prepare_dataloader(batch_size: int):
-    train_data = torch.load('dataloaders/train_data.pt')
-    valid_data = torch.load('dataloaders/valid_data.pt')
+    train_data = torch.load('dataset_objects/train_data.pt')
+    valid_data = torch.load('dataset_objects/valid_data.pt')
     train_loader = DataLoader(
         train_data,
         batch_size=batch_size,
