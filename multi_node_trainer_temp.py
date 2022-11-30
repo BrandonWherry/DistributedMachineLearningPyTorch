@@ -105,7 +105,6 @@ class Trainer:
             source = source.to(self.local_rank)
             targets = targets.to(self.local_rank)
             train_loss += self._run_batch(source, targets)
-            print('Finished Batch')
 
         # Calculating Validation loss
         for source, targets in self.valid_data:
