@@ -101,12 +101,13 @@ class Trainer:
         valid_loss = 0
 
         # Train Loop
-        print('Test0')
         for source, targets in self.train_data:
+            now = time()
             source = source.to(self.local_rank)
             targets = targets.to(self.local_rank)
             train_loss += self._run_batch(source, targets)
-            print('Test1')
+            later = time()
+            print('Test1', (later-now))
 
         # Calculating Validation loss
         for source, targets in self.valid_data:
@@ -209,7 +210,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='distributed training job')
     parser.add_argument('max_run_time', type=float, help='How long do you want to train, in hours')
-    parser.add_argument('--batch_size', default=32, help='Input batch size on each device (default: 32)')
+    parser.add_argument('--batch_size', default=128, help='Input batch size on each device (default: 128)')
     args = parser.parse_args()
     
     main(args.max_run_time, args.batch_size)
