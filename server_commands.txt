@@ -1,6 +1,0 @@
-# useful server commands for copy paste purposes
-
-git clone https://github.com/Brandon1126/DistributedMachineLearningPyTorch.git
-
-ssh -i EC2.pem ubuntu@
-
