@@ -4,9 +4,10 @@
     This code is nicely modularized. I have altered from the original.
 
     Changes I made:
-        -snapshots are saved based on the best achieved validation accuracy, and not saved at set epoch numbers.
+        -snapshots are saved based on the best achieved validation accuracy (instead of blindly every few epochs)
         -modified to calculate validation loss each epoch
         -snapshots now include current validation loss
+        -Improved fault tolerance, if a crash happens, the total state of a trainer object will be saved
 
     Changes made by Brandon W @UTSA
 """
