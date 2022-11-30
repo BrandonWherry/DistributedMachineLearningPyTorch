@@ -16,3 +16,7 @@ class MyTrainDataset(Dataset):
     
     def __getitem__(self, index):
         return self.data[index]
+
+
+def imageNetDataLoader():
+    pass

@@ -17,6 +17,7 @@ from torch.utils.data.distributed import DistributedSampler
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
 import os
+from time import time
 
 
 def ddp_setup():
@@ -42,6 +43,7 @@ class Trainer:
         self.save_every = save_every
         self.epochs_run = 0
         self.snapshot_path = snapshot_path
+        self.run_time = 0.0
         if os.path.exists(snapshot_path):
             print("Loading snapshot")
             self._load_snapshot(snapshot_path)
@@ -81,9 +83,15 @@ class Trainer:
 
     def train(self, max_epochs: int):
         for epoch in range(self.epochs_run, max_epochs):
+            elapsed_time = time()
             self._run_epoch(epoch)
             if self.local_rank == 0 and epoch % self.save_every == 0:
                 self._save_snapshot(epoch)
+            elapsed_time = elapsed_time - time()
+            self.run_time += elapsed_time
+            if (self.run_time > 3600.0):
+                print(f"Training completed. Total train time: {self.run_time:.2f} with epoch: {self.epochs_run}")
+                break
 
 
 def load_train_objs():
