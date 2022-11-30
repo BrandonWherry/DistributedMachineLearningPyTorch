@@ -1,0 +1,5 @@
+# useful server commands (for copy paste purposes on EC2 VMs)
+
+git clone https://github.com/Brandon1126/DistributedMachineLearningPyTorch.git
+
+
