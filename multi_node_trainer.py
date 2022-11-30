@@ -29,11 +29,13 @@ def ddp_setup():
     """
     init_process_group(backend="nccl")
 
+
 class Trainer:
     def __init__(
         self,
         model: torch.nn.Module,
         train_data: DataLoader,
+        valid_data: DataLoader,
         optimizer: torch.optim.Optimizer,
         save_every: int,
         snapshot_path: str,
@@ -53,6 +55,7 @@ class Trainer:
 
         self.model = DDP(self.model, device_ids=[self.local_rank])
 
+
     def _load_snapshot(self, snapshot_path):
         loc = f"cuda:{self.gpu_id}"
         snapshot = torch.load(snapshot_path, map_location=loc)
@@ -60,8 +63,10 @@ class Trainer:
         self.epochs_run = snapshot["EPOCHS_RUN"]
         print(f"Resuming training from snapshot at Epoch {self.epochs_run}")
 
+
     def _calc_validation_loss(self, source, targets):
         pass
+
 
     def _run_batch(self, source, targets):
         self.optimizer.zero_grad()
@@ -69,6 +74,7 @@ class Trainer:
         loss = F.cross_entropy(output, targets)
         loss.backward()
         self.optimizer.step()
+
 
     def _run_epoch(self, epoch):
         b_sz = len(next(iter(self.train_data))[0])
@@ -79,6 +85,7 @@ class Trainer:
             targets = targets.to(self.local_rank)
             self._run_batch(source, targets)
 
+
     def _save_snapshot(self, epoch):
         snapshot = {
             "MODEL_STATE": self.model.module.state_dict(),
@@ -86,6 +93,7 @@ class Trainer:
         }
         torch.save(snapshot, self.snapshot_path)
         print(f"Epoch {epoch} | Training snapshot saved at {self.snapshot_path}")
+
 
     def train(self, max_epochs: int):
         for epoch in range(self.epochs_run, max_epochs):
