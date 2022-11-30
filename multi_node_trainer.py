@@ -3,12 +3,12 @@
 
     This code is nicely modularized. I have altered from the original.
 
-    Changes made:
-    snapshots are saved based on the best achieved validation accuracy, and not saved at set epoch numbers.
-    modified to calculate validation loss each epoch
-    snapshots nowm include current validation loss
+    Changes I made:
+        -snapshots are saved based on the best achieved validation accuracy, and not saved at set epoch numbers.
+        -modified to calculate validation loss each epoch
+        -snapshots now include current validation loss
 
-    Changes made by Brandon Wherry @UTSA
+    Changes made by Brandon W @UTSA
 """
 import torch
 import torch.nn.functional as F
