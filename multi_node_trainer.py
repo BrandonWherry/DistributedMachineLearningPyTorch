@@ -1,11 +1,14 @@
 """Base Code obtained from:
     https://github.com/pytorch/examples/blob/main/distributed/ddp-tutorial-series/multinode.py
 
-    This code is nicely modularized. I have altered from the original source.
+    This code is nicely modularized. I have altered from the original.
 
     Changes made:
     snapshots are saved based on the best achieved validation accuracy, and not saved at set epoch numbers.
+    modified to calculate validation loss each epoch
+    snapshots nowm include current validation loss
 
+    Changes made by Brandon Wherry @UTSA
 """
 import torch
 import torch.nn.functional as F
@@ -56,6 +59,9 @@ class Trainer:
         self.model.load_state_dict(snapshot["MODEL_STATE"])
         self.epochs_run = snapshot["EPOCHS_RUN"]
         print(f"Resuming training from snapshot at Epoch {self.epochs_run}")
+
+    def _calc_validation_loss(self, source, targets):
+        pass
 
     def _run_batch(self, source, targets):
         self.optimizer.zero_grad()
@@ -122,7 +128,7 @@ def main(save_every: int, total_epochs: int, batch_size: int, snapshot_path: str
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description='simple distributed training job')
+    parser = argparse.ArgumentParser(description='distributed training job')
     parser.add_argument('total_epochs', type=int, help='Total epochs to train the model')
     parser.add_argument('save_every', type=int, help='How often to save a snapshot')
     parser.add_argument('--batch_size', default=32, help='Input batch size on each device (default: 32)')
