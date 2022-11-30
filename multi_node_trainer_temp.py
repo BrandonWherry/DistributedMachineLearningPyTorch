@@ -102,12 +102,10 @@ class Trainer:
 
         # Train Loop
         for source, targets in self.train_data:
-            now = time()
             source = source.to(self.local_rank)
             targets = targets.to(self.local_rank)
             train_loss += self._run_batch(source, targets)
-            later = time()
-            print('Test1', (later-now))
+            print('Finished Batch')
 
         # Calculating Validation loss
         for source, targets in self.valid_data:
@@ -118,8 +116,7 @@ class Trainer:
         # Update loss histories
         self.train_loss_history.append(train_loss/len(self.train_data))
         self.valid_loss_history.append(valid_loss/len(self.valid_data))
-        print('Finished Epoch')
-
+        
 
     def _save_snapshot(self, epoch: int):
         snapshot = {
@@ -138,17 +135,19 @@ class Trainer:
     def train(self):
         exited_epoch_num = self.epochs_run
         for epoch in range(self.epochs_run, 100000):
-            elapsed_time = time()
+            start = time()
             self._run_epoch(epoch)
             if self.valid_loss_history[-1] < self.lowest_loss:
                 self._save_snapshot(epoch)
                 self.lowest_loss = self.valid_loss_history[-1]
-            elapsed_time = elapsed_time - time()
+            elapsed_time = start - time()
             self.run_time += elapsed_time
+            print(f'Epoch time: {elapsed_time:.2f}')
             if (self.run_time > self.max_run_time):
                 print(f"Training completed. Total train time: {self.run_time:.2f}")
                 break
             exited_epoch_num += 1
+            
 
         #Saving import metrics to analyze training on local machine
         train_metrics = {
