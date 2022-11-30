@@ -21,6 +21,10 @@ import os
 from time import time
 import numpy as np
 from torchvision.models import vgg19
+from torchvision import transforms
+from torchvision.datasets import ImageFolder
+from torch.utils.data import random_split
+from math import floor, ceil
 
 
 def ddp_setup():
@@ -152,6 +156,7 @@ class Trainer:
         }
         torch.save(train_metrics, 'savedmodels/final_training_metrics.pt')
 
+
 def load_train_objs():
     model = vgg19(weights=None)
     # Replacing lat layer of vgg19 model with one that has 100 outputs, instead of 1000
@@ -162,8 +167,15 @@ def load_train_objs():
 
 
 def prepare_dataloader(batch_size: int):
-    train_data = torch.load('dataset_objects/train_data.pt')
-    valid_data = torch.load('dataset_objects/valid_data.pt')
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+    combined_data = ImageFolder(root='data/train', transform=transform)
+    train_split = ceil(len(combined_data) * 0.90)
+    valid_split = floor(len(combined_data) * 0.10)
+    train_data, valid_data = random_split(combined_data, [train_split, valid_split])
     train_loader = DataLoader(
         train_data,
         batch_size=batch_size,
