@@ -172,16 +172,16 @@ def load_train_objs():
     model.classifier = torch.nn.Sequential(
         torch.nn.Linear(in_features=25088, out_features=4096, bias=True),
         torch.nn.ReLU(inplace=True),
-        torch.nn.Dropout(p=0.5, inplace=False),
+        torch.nn.Dropout(p=0.3, inplace=False),
         torch.nn.Linear(in_features=4096, out_features=4096, bias=True),
         torch.nn.ReLU(inplace=True),
-        torch.nn.Dropout(p=0.5, inplace=False),
+        torch.nn.Dropout(p=0.3, inplace=False),
         torch.nn.Linear(in_features=4096, out_features=100, bias=True)
     )
     for param in model.classifier.parameters():
         param.requires_grad = True
-        optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
-
+    
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
     return model, optimizer
 
 
@@ -192,9 +192,13 @@ def prepare_dataloader(batch_size: int):
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
     combined_data = ImageFolder(root='data/train', transform=transform)
-    train_split = ceil(len(combined_data) * 0.90)
-    valid_split = floor(len(combined_data) * 0.10)
-    train_data, valid_data = random_split(combined_data, [train_split, valid_split])
+    # 80 - 20 split
+    train_split = ceil(len(combined_data) * 0.80)
+    valid_split = floor(len(combined_data) * 0.20)
+    # Each machine must get the same data
+    generator = torch.Generator()
+    generator.manual_seed(42)
+    train_data, valid_data = random_split(combined_data, [train_split, valid_split], generator=generator)
     train_loader = DataLoader(
         train_data,
         batch_size=batch_size,
