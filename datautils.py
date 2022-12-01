@@ -1,11 +1,12 @@
 import torch
 from torch.utils.data import Dataset
 
+
 class MyTrainDataset(Dataset):
     """Random Dataset meant for testing, obtained from
        https://github.com/pytorch/examples/blob/main/distributed/ddp-tutorial-series/datautils.py
     Args:
-        Dataset (_type_): _description_
+        Dataset (Dataset): Dataset Wrapper Class
     """
     def __init__(self, size):
         self.size = size
@@ -16,7 +17,3 @@ class MyTrainDataset(Dataset):
     
     def __getitem__(self, index):
         return self.data[index]
-
-
-def imageNetDataLoader():
-    pass
