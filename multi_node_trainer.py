@@ -134,8 +134,8 @@ class Trainer:
             "VALID_HISTORY" : self.valid_loss_history,
             "LOWEST_LOSS" : self.lowest_loss
         }
-        torch.save(snapshot, self.snapshot_path)
-        print(f"Epoch {epoch} | Training snapshot saved at {self.snapshot_path}")
+        torch.save(snapshot, self.save_path)
+        print(f"Epoch {epoch} | Training snapshot saved at {self.save_path}")
 
 
     def train(self):
@@ -172,20 +172,21 @@ def load_train_objs():
     # Replacing lat layer of vgg19 model with one that has 100 outputs, instead of 1000
     # This is because I'm using just a subset of imageNet (1/10th the full dataset)
 
-    for param in model.parameters():
-        param.requires_grad = False
+    # for param in model.parameters():
+    #     param.requires_grad = False
 
     model.classifier = torch.nn.Sequential(
         torch.nn.Linear(in_features=25088, out_features=4096, bias=True),
         torch.nn.ReLU(inplace=True),
-        torch.nn.Dropout(p=0.3, inplace=False),
-        torch.nn.Linear(in_features=4096, out_features=4096, bias=True),
+        torch.nn.Dropout(p=0.5, inplace=False),
+        torch.nn.Linear(in_features=4096, out_features=2048, bias=True),
         torch.nn.ReLU(inplace=True),
-        torch.nn.Dropout(p=0.3, inplace=False),
-        torch.nn.Linear(in_features=4096, out_features=100, bias=True)
+        torch.nn.Dropout(p=0.5, inplace=False),
+        torch.nn.Linear(in_features=2048, out_features=20, bias=True)
     )
-    for param in model.classifier.parameters():
-        param.requires_grad = True
+
+    # for param in model.classifier.parameters():
+    #     param.requires_grad = True
     
     optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
     return model, optimizer
@@ -207,11 +208,11 @@ def prepare_dataloader(batch_size: int):
     generator.manual_seed(42)
     train_data, valid_data = random_split(combined_data, [train_split, valid_split], generator=generator)
     train_loader = DataLoader(
-        valid_data,
+        train_data,
         batch_size=batch_size,
         pin_memory=True,
         shuffle=False,
-        sampler=DistributedSampler(valid_data)
+        sampler=DistributedSampler(train_data)
     )
     valid_loader = DataLoader(
         valid_data,
