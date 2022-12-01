@@ -14,7 +14,6 @@
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-import torch.multiprocessing as mp
 from torch.utils.data.distributed import DistributedSampler
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
@@ -85,7 +84,7 @@ class Trainer:
         output = self.model(source)
         loss = F.cross_entropy(output, targets)
         self.model.train()
-        return  float(loss.item())
+        return float(loss.item())
 
 
     def _run_batch(self, source, targets) -> float:
@@ -214,7 +213,7 @@ def prepare_dataloader(batch_size: int):
     return train_loader, valid_loader
 
 
-def main(max_run_time: float, batch_size: int, save_name: str = "snapshot.pt"):
+def main(max_run_time: float, batch_size: int, save_name: str):
     ddp_setup()
     model, optimizer = load_train_objs()
     train_data, valid_data = prepare_dataloader(batch_size)
@@ -228,7 +227,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='distributed training job')
     parser.add_argument('max_run_time', type=float, help='How long do you want to train, in hours')
     parser.add_argument('--batch_size', default=64, help='Input batch size on each device (default: 64)')
-    parser.add_argument('--model_name', type=str, help='Input the same name of model (default: 64)')
+    parser.add_argument('--model_name', type=str, default='snapshot.pt', help='Input the save name of model (default: snapshot.pt)')
     args = parser.parse_args()
     
-    main(args.max_run_time, args.batch_size)
+    main(args.max_run_time, args.batch_size, args.model_name)
