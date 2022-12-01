@@ -53,7 +53,7 @@ class Trainer:
         self.epochs_run = 0    #current epoch tracker
         self.save_path = save_path
         self.run_time = 0.0    #current run_time tracker
-        self.max_run_time = max_run_time * 60**2 # Converting to hours
+        self.max_run_time = max_run_time * 60**2 # Converting to seconds
         self.train_loss_history = list()
         self.valid_loss_history = list()
         self.lowest_loss = np.Inf
@@ -124,16 +124,14 @@ class Trainer:
             "RUN_TIME": self.run_time,
             "TRAIN_HISTORY" : self.train_loss_history,
             "VALID_HISTORY" : self.valid_loss_history,
-            "LOWEST_LOSS" : self.lowest_loss
-        }
-
+            "LOWEST_LOSS" : self.lowest_loss} 
         torch.save(snapshot, self.snapshot_path)
         print(f"Epoch {epoch} | Training snapshot saved at {self.snapshot_path}")
 
 
     def train(self):
         exited_epoch_num = self.epochs_run
-        for epoch in range(self.epochs_run, 100000):
+        for epoch in range(self.epochs_run, self.epochs_run + 1000):
             start = time()
             self._run_epoch(epoch)
             if self.valid_loss_history[-1] < self.lowest_loss:
@@ -146,17 +144,18 @@ class Trainer:
                 print(f"Training completed. Total train time: {self.run_time:.2f}")
                 break
             exited_epoch_num += 1
-            
+        
 
         #Saving import metrics to analyze training on local machine
-        train_metrics = {
-            "EPOCHS_RUN": exited_epoch_num,
-            "RUN_TIME": self.run_time,
-            "TRAIN_HISTORY" : self.train_loss_history,
-            "VALID_HISTORY" : self.valid_loss_history,
-            "LOWEST_LOSS" : self.lowest_loss
-        }
-        torch.save(train_metrics, 'savedmodels/final_training_metrics.pt')
+        if (self.global_rank == 0):
+            train_metrics = {
+                "EPOCHS_RUN": exited_epoch_num,
+                "RUN_TIME": self.run_time,
+                "TRAIN_HISTORY" : self.train_loss_history,
+                "VALID_HISTORY" : self.valid_loss_history,
+                "LOWEST_LOSS" : self.lowest_loss
+            }
+            torch.save(train_metrics, 'results/final_training_metrics.pt')
 
 
 def load_train_objs():
@@ -180,7 +179,7 @@ def load_train_objs():
         param.requires_grad = True
     
     optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
-    return model, optimizer
+    return DDP(model), optimizer
 
 
 def prepare_dataloader(batch_size: int):
