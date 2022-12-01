@@ -98,8 +98,8 @@ class Trainer:
 
     def _run_epoch(self, epoch):
         b_sz = len(next(iter(self.train_data))[0])
-        print(f"[GPU{self.global_rank}] Epoch {epoch} | Batchsize: {b_sz}", end="")
-        print(f"| Steps: {len(self.train_data)} | Best Validation Loss: {self.lowest_loss}")
+        print(f"[GPU{self.global_rank}] Epoch: {epoch} | Batch_sz: {b_sz}", end="")
+        print(f"| Steps: {len(self.train_data)} | Validation Loss: {self.lowest_loss:.4f}")
         self.train_data.sampler.set_epoch(epoch)
         train_loss = 0
         valid_loss = 0
@@ -131,7 +131,7 @@ class Trainer:
             "LOWEST_LOSS" : self.lowest_loss
         }
         torch.save(snapshot, self.save_path)
-        print(f"Epoch {epoch} | Training snapshot saved at {self.save_path}")
+        print(f"Training snapshot saved at {self.save_path}")
 
 
     def train(self):
@@ -144,7 +144,7 @@ class Trainer:
                 self.lowest_loss = self.valid_loss_history[-1]
             elapsed_time = time() - start
             self.run_time += elapsed_time
-            print(f'Epoch time: {elapsed_time:.2f}')
+            print(f'Current train time: {self.run_time:.2f} seconds')
             if (self.run_time > self.max_run_time):
                 print(f"Training completed. Total train time: {self.run_time:.2f}")
                 break
