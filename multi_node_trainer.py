@@ -46,7 +46,7 @@ class Trainer:
         valid_data: DataLoader,
         optimizer: torch.optim.Optimizer,
         max_run_time: float,
-        save_path: str,
+        save_name: str,
     ) -> None:
         self.local_rank = int(os.environ["LOCAL_RANK"])
         self.global_rank = int(os.environ["RANK"])
@@ -55,15 +55,15 @@ class Trainer:
         self.valid_data = valid_data
         self.optimizer = optimizer
         self.epochs_run = 0    #current epoch tracker
-        self.save_path = save_path
+        self.save_path = "checkpoints/" + save_name
         self.run_time = 0.0    #current run_time tracker
         self.max_run_time = max_run_time * 60**2 # Converting to seconds
         self.train_loss_history = list()
         self.valid_loss_history = list()
         self.lowest_loss = np.Inf
-        if os.path.exists(save_path):
+        if os.path.exists(self.save_path):
             print("Loading snapshot")
-            self._load_snapshot(save_path)
+            self._load_snapshot(self.save_path)
         #Key DDP Wrapper, this allows Distributed Data Parallel Training on model
         self.model = DDP(self.model, device_ids=[self.local_rank])
 
@@ -207,11 +207,11 @@ def prepare_dataloader(batch_size: int):
     generator.manual_seed(42)
     train_data, valid_data = random_split(combined_data, [train_split, valid_split], generator=generator)
     train_loader = DataLoader(
-        train_data,
+        valid_data,
         batch_size=batch_size,
         pin_memory=True,
         shuffle=False,
-        sampler=DistributedSampler(train_data)
+        sampler=DistributedSampler(valid_data)
     )
     valid_loader = DataLoader(
         valid_data,
@@ -223,11 +223,11 @@ def prepare_dataloader(batch_size: int):
     return train_loader, valid_loader
 
 
-def main(max_run_time: float, batch_size: int, snapshot_path: str = "savedmodels/snapshot.pt"):
+def main(max_run_time: float, batch_size: int, save_name: str = "snapshot.pt"):
     ddp_setup()
     model, optimizer = load_train_objs()
     train_data, valid_data = prepare_dataloader(batch_size)
-    trainer = Trainer(model, train_data, valid_data, optimizer, max_run_time, snapshot_path)
+    trainer = Trainer(model, train_data, valid_data, optimizer, max_run_time, save_name)
     trainer.train()
     destroy_process_group()
 
@@ -237,6 +237,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='distributed training job')
     parser.add_argument('max_run_time', type=float, help='How long do you want to train, in hours')
     parser.add_argument('--batch_size', default=64, help='Input batch size on each device (default: 64)')
+    parser.add_argument('--model_name', type=str, help='Input the same name of model (default: 64)')
     args = parser.parse_args()
     
     main(args.max_run_time, args.batch_size)
