@@ -200,7 +200,8 @@ def prepare_dataloader(batch_size: int):
     # 80 - 20 split
     train_split = ceil(len(combined_data) * 0.80)
     valid_split = floor(len(combined_data) * 0.20)
-    # Each machine must get the same data
+    # Each machine must get the same data, using a seed to ensure a consistent data split across all machines
+    # The sampler will make sure that the batches are different
     generator = torch.Generator()
     generator.manual_seed(42)
     train_data, valid_data = random_split(combined_data, [train_split, valid_split], generator=generator)
