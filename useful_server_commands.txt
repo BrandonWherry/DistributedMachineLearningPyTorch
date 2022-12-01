@@ -1,0 +1,31 @@
+## useful server commands (for copy paste purposes on EC2 VMs)
+## cat server_commands for easy copy/paste into terminal
+
+source activate pytorch
+
+#Single Worker Script
+
+bash scripts/single_node_train.sh 3.0 single_node 64
+
+#Two Worker Scripts
+
+bash scripts/multi_node_train.sh 3.0 0 2 two_worker 64`
+bash scripts/multi_node_train.sh 3.0 1 2 two_worker 64`
+
+#Four Worker Scripts
+
+bash scripts/multi_node_train.sh 3.0 0 4 four_worker 64`
+bash scripts/multi_node_train.sh 3.0 1 4 four_worker 64`
+bash scripts/multi_node_train.sh 3.0 2 4 four_worker 64`
+bash scripts/multi_node_train.sh 3.0 3 4 four_worker 64`
+
+#Eight Worker Scripts
+
+bash scripts/multi_node_train.sh 3.0 0 8 eight_worker 64`
+bash scripts/multi_node_train.sh 3.0 1 8 eight_worker 64`
+bash scripts/multi_node_train.sh 3.0 2 8 eight_worker 64`
+bash scripts/multi_node_train.sh 3.0 3 8 eight_worker 64`
+bash scripts/multi_node_train.sh 3.0 4 8 eight_worker 64`
+bash scripts/multi_node_train.sh 3.0 5 8 eight_worker 64`
+bash scripts/multi_node_train.sh 3.0 6 8 eight_worker 64`
+bash scripts/multi_node_train.sh 3.0 7 8 eight_worker 64`

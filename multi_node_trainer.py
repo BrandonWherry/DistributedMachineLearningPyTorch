@@ -45,7 +45,7 @@ class Trainer:
         valid_data: DataLoader,
         optimizer: torch.optim.Optimizer,
         max_run_time: float,
-        save_name: str,
+        snapshot_name: str,
     ) -> None:
         self.local_rank = int(os.environ["LOCAL_RANK"])
         self.global_rank = int(os.environ["RANK"])
@@ -54,7 +54,7 @@ class Trainer:
         self.valid_data = valid_data
         self.optimizer = optimizer
         self.epochs_run = 0    #current epoch tracker
-        self.save_path = "checkpoints/" + save_name
+        self.save_path = "training_saves/" + snapshot_name
         self.run_time = 0.0    #current run_time tracker
         self.max_run_time = max_run_time * 60**2 # Converting to seconds
         self.train_loss_history = list()
@@ -160,7 +160,7 @@ class Trainer:
                 "VALID_HISTORY" : self.valid_loss_history,
                 "LOWEST_LOSS" : self.lowest_loss
             }
-            torch.save(train_metrics, 'results/final_training_metrics.pt')
+            torch.save(train_metrics, self.save_path[:-3] + "_metrics.pt")
 
 
 def load_train_objs():
@@ -210,11 +210,11 @@ def prepare_dataloader(batch_size: int):
     return train_loader, valid_loader
 
 
-def main(max_run_time: float, batch_size: int, save_name: str):
+def main(max_run_time: float, batch_size: int, snapshot_name: str):
     ddp_setup()
     model, optimizer = load_train_objs()
     train_data, valid_data = prepare_dataloader(batch_size)
-    trainer = Trainer(model, train_data, valid_data, optimizer, max_run_time, save_name)
+    trainer = Trainer(model, train_data, valid_data, optimizer, max_run_time, snapshot_name)
     trainer.train()
     destroy_process_group()
 
@@ -224,7 +224,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='distributed training job')
     parser.add_argument('--train_time', default=0.5, help='How long do you want to train, in hours (default 30 minutes)')
     parser.add_argument('--batch_size', default=64, help='Input batch size on each device (default: 64)')
-    parser.add_argument('--model_name', default='snapshot.pt', help='Input the save name of model (default: snapshot.pt)')
+    parser.add_argument('--model_name', default='model_snapshot.pt', help='Input the save name of model (default: model_snapshot.pt)')
     args = parser.parse_args()
     
-    main(args.train_time, args.batch_size, args.model_name)
+    main(args.train_time, args.batch_size, args.snapshot_name)
