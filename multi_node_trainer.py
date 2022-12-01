@@ -4,10 +4,11 @@
     This code is nicely modularized. I have altered from the original.
 
     Changes I made:
-        -snapshots are saved based on the best achieved validation accuracy (instead of blindly every few epochs)
+        -snapshots are saved based on the best achieved validation loss (instead of blind saves every few epochs)
         -modified to calculate validation loss each epoch
         -snapshots now include current validation loss
         -Improved fault tolerance, if a crash happens, the total state of a trainer object will be saved
+        -The training ends based on the inputted num of hours (not epoch number)
 
     Changes made by Brandon W @UTSA
 """
@@ -59,6 +60,7 @@ class Trainer:
         self.max_run_time = max_run_time * 60**2 # Converting to seconds
         self.train_loss_history = list()
         self.valid_loss_history = list()
+        self.epoch_times = list(0)
         self.lowest_loss = np.Inf
         if os.path.exists(self.save_path):
             print("Loading snapshot")
@@ -75,8 +77,9 @@ class Trainer:
         self.run_time = snapshot['RUN_TIME']
         self.train_loss_history = snapshot['TRAIN_HISTORY']
         self.valid_loss_history = snapshot['VALID_HISTORY']
+        self.epoch_times = snapshot['EPOCH_TIMES']
         self.lowest_loss = snapshot['LOWEST_LOSS']
-        print(f"Resuming training from snapshot at Epoch {self.epochs_run}")
+        print(f"Resuming training from save at Epoch {self.epochs_run}")
 
 
     def _calc_validation_loss(self, source, targets) -> float:
@@ -96,11 +99,11 @@ class Trainer:
         return float(loss.item())
 
 
-    def _run_epoch(self, epoch):
+    def _run_epoch(self):
         b_sz = len(next(iter(self.train_data))[0])
-        print(f"/n[GPU{self.global_rank}] Epoch: {epoch} | Batch_sz: {b_sz} ", end="")
+        print(f"/n[GPU{self.global_rank}] Epoch: {self.epochs_run} | Batch_sz: {b_sz} ", end="")
         print(f"| Steps: {len(self.train_data)} | Validation Loss: {self.lowest_loss:.4f}")
-        self.train_data.sampler.set_epoch(epoch)
+        self.train_data.sampler.set_epoch(self.epochs_run)
         train_loss = 0
         valid_loss = 0
 
@@ -121,13 +124,14 @@ class Trainer:
         self.valid_loss_history.append(valid_loss/len(self.valid_data))
         
 
-    def _save_snapshot(self, epoch: int):
+    def _save_snapshot(self):
         snapshot = {
             "MODEL_STATE": self.model.module.state_dict(),
-            "EPOCHS_RUN": epoch,
+            "EPOCHS_RUN": self.epochs_run,
             "RUN_TIME": self.run_time,
             "TRAIN_HISTORY" : self.train_loss_history,
             "VALID_HISTORY" : self.valid_loss_history,
+            "EPOCH_TIMES" : self.epoch_times,
             "LOWEST_LOSS" : self.lowest_loss
         }
         torch.save(snapshot, self.save_path)
@@ -135,32 +139,32 @@ class Trainer:
 
 
     def train(self):
-        exited_epoch_num = self.epochs_run
-        for epoch in range(self.epochs_run, self.epochs_run + 1000):
+        for _ in range(self.epochs_run, self.epochs_run + 1000):
             start = time()
-            self._run_epoch(epoch)
-            if self.valid_loss_history[-1] < self.lowest_loss:
-                elapsed_time = time() - start
-                self.run_time += elapsed_time
-                start = time()
-                self.lowest_loss = self.valid_loss_history[-1]
-                self._save_snapshot(epoch + 1)
-            print(f'Current train time: {self.run_time:.2f} seconds')
-            if (self.run_time > self.max_run_time):
-                print(f"Training completed. Total train time: {self.run_time:.2f}")
-                break
-            exited_epoch_num += 1
+            self._run_epoch()
             elapsed_time = time() - start
             self.run_time += elapsed_time
+            start = time()
+            self.epoch_times.append(self.run_time)
+            self.epochs_run += 1
+            if self.valid_loss_history[-1] < self.lowest_loss:
+                self.lowest_loss = self.valid_loss_history[-1]
+                self._save_snapshot()
+            print(f'Train time: {(self.run_time//60**2):.2f} hr {((self.run_time%60.0**2)//60.0):.2f} min')
+            elapsed_time = time() - start
+            self.run_time += elapsed_time
+            if (self.run_time > self.max_run_time):
+                print(f"Training completed -> Total train time: {self.run_time:.2f} seconds")
+                break
         
-
         #Saving import metrics to analyze training on local machine
         if (self.global_rank == 0):
             train_metrics = {
-                "EPOCHS_RUN": exited_epoch_num,
+                "EPOCHS_RUN": self.epochs_run,
                 "RUN_TIME": self.run_time,
                 "TRAIN_HISTORY" : self.train_loss_history,
                 "VALID_HISTORY" : self.valid_loss_history,
+                "EPOCH_TIMES" : self.epoch_times,
                 "LOWEST_LOSS" : self.lowest_loss
             }
             torch.save(train_metrics, self.save_path[:-3] + "_metrics.pt")
@@ -188,19 +192,16 @@ def prepare_dataloader(batch_size: int):
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
     combined_data = ImageFolder(root='data/train', transform=transform)
-    # 80 - 20 split
     train_split = ceil(len(combined_data) * 0.80)
     valid_split = floor(len(combined_data) * 0.20)
-    # Each machine must get the same data, using a seed to ensure a consistent data split across all machines
-    # The sampler will make sure that the batches are different
     generator = torch.Generator()
-    generator.manual_seed(42)
+    generator.manual_seed(42) # Each machine must get the same data across all machines
     train_data, valid_data = random_split(combined_data, [train_split, valid_split], generator=generator)
     train_loader = DataLoader(
         train_data,
         batch_size=batch_size,
         pin_memory=True,
-        shuffle=False,
+        shuffle=False, # The sampler will make sure that the batches are different
         sampler=DistributedSampler(train_data)
     )
     valid_loader = DataLoader(
