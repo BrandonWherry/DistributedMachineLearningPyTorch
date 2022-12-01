@@ -106,12 +106,9 @@ class Trainer:
 
         # Train Loop
         for source, targets in self.train_data:
-            start = time()
             source = source.to(self.local_rank)
             targets = targets.to(self.local_rank)
             train_loss += self._run_batch(source, targets)
-            elapsed_time = time() - start
-            print(f"Step time: {elapsed_time:.2f}")
 
         # Calculating Validation loss
         for source, targets in self.valid_data:

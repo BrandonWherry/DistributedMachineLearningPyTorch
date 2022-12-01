@@ -7,5 +7,20 @@ source activate pytorch
 torchrun --standalone --nproc_per_node=gpu multi_node_trainer.py 0.2
 
 ## Multi Worker torchrun example (2 Worker)
-torchrun --nproc_per_node=1 --nnodes=2 --node_rank=0 --rdzv_id=123 --rdzv_backend=c10d --rdzv_endpoint=172.31.12.214:29500 multi_node_trainer.py 0.2 --model_name=twonode_test.pt
-torchrun --nproc_per_node=1 --nnodes=2 --node_rank=1 --rdzv_id=123 --rdzv_backend=c10d --rdzv_endpoint=172.31.12.214:29500 multi_node_trainer.py 0.2 --model_name=twonode_test.pt
+torchrun            \ 
+--nproc_per_node=1  \ 
+--nnodes=2          \ 
+--node_rank=0       \ 
+--rdzv_id=123       \
+--rdzv_backend=c10d \
+--rdzv_endpoint=172.31.12.214:29500 \
+multi_node_trainer.py 0.2 --model_name=two_node_test.pt 2>&1 | tee two_node_test.log
+
+torchrun            \ 
+--nproc_per_node=1  \ 
+--nnodes=2          \ 
+--node_rank=1       \ 
+--rdzv_id=123       \
+--rdzv_backend=c10d \
+--rdzv_endpoint=172.31.12.214:29500 \
+multi_node_trainer.py 0.2 --model_name=twonode_test.pt
