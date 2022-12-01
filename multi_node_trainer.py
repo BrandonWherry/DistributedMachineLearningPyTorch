@@ -223,8 +223,8 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='distributed training job')
     parser.add_argument('--train_time', default=0.5, help='How long do you want to train, in hours (default 30 minutes)')
-    parser.add_argument('--batch_size', default=64, help='Input batch size on each device (default: 64)')
     parser.add_argument('--model_name', default='model_snapshot.pt', help='Input the save name of model (default: model_snapshot.pt)')
+    parser.add_argument('--batch_size', default=64, help='Input batch size on each device (default: 64)')
     args = parser.parse_args()
     
     main(args.train_time, args.batch_size, args.model_name)
