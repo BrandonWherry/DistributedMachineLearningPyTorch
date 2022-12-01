@@ -230,7 +230,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='distributed training job')
     parser.add_argument('max_run_time', type=float, help='How long do you want to train, in hours')
-    parser.add_argument('--batch_size', default=128, help='Input batch size on each device (default: 128)')
+    parser.add_argument('--batch_size', default=64, help='Input batch size on each device (default: 64)')
     args = parser.parse_args()
     
     main(args.max_run_time, args.batch_size)
