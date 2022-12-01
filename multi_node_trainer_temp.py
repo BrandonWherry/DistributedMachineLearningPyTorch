@@ -127,7 +127,8 @@ class Trainer:
             "RUN_TIME": self.run_time,
             "TRAIN_HISTORY" : self.train_loss_history,
             "VALID_HISTORY" : self.valid_loss_history,
-            "LOWEST_LOSS" : self.lowest_loss} 
+            "LOWEST_LOSS" : self.lowest_loss
+        } 
         torch.save(snapshot, self.snapshot_path)
         print(f"Epoch {epoch} | Training snapshot saved at {self.snapshot_path}")
 
