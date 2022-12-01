@@ -132,7 +132,7 @@ class Trainer:
             "TRAIN_HISTORY" : self.train_loss_history,
             "VALID_HISTORY" : self.valid_loss_history,
             "LOWEST_LOSS" : self.lowest_loss
-        } 
+        }
         torch.save(snapshot, self.snapshot_path)
         print(f"Epoch {epoch} | Training snapshot saved at {self.snapshot_path}")
 
@@ -234,7 +234,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='distributed training job')
     parser.add_argument('max_run_time', type=float, help='How long do you want to train, in hours')
-    parser.add_argument('--batch_size', default=64, help='Input batch size on each device (default: 64)')
+    parser.add_argument('--batch_size', default=128, help='Input batch size on each device (default: 128)')
     args = parser.parse_args()
     
     main(args.max_run_time, args.batch_size)
