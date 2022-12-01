@@ -227,4 +227,4 @@ if __name__ == "__main__":
     parser.add_argument('--model_name', default='model_snapshot.pt', help='Input the save name of model (default: model_snapshot.pt)')
     args = parser.parse_args()
     
-    main(args.train_time, args.batch_size, args.snapshot_name)
+    main(args.train_time, args.batch_size, args.model_name)
