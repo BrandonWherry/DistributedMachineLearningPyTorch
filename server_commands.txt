@@ -3,3 +3,13 @@
 
 ## For executing torchrun on a single worker
 torchrun --standalone --nproc_per_node=gpu multi_node_trainer.py 0.2
+
+## Multi Worker torchrun example (2 Worker)
+torchrun \
+--nproc_per_node=gpu \
+--nnodes=2 \
+--node_rank=0 \
+--rdzv_id=42 \
+--rdzv_backend=c10d \
+--rdzv_endpoint=172.31.12.214 \
+multi_node_trainer.py 0.2 2>&1 | tee results/training_output.log
