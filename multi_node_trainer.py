@@ -169,12 +169,6 @@ class Trainer:
 
 def load_train_objs():
     model = vgg19(weights='IMAGENET1K_V1')
-    # Replacing lat layer of vgg19 model with one that has 100 outputs, instead of 1000
-    # This is because I'm using just a subset of imageNet (1/10th the full dataset)
-
-    # for param in model.parameters():
-    #     param.requires_grad = False
-
     model.classifier = torch.nn.Sequential(
         torch.nn.Linear(in_features=25088, out_features=4096, bias=True),
         torch.nn.ReLU(inplace=True),
@@ -184,10 +178,6 @@ def load_train_objs():
         torch.nn.Dropout(p=0.5, inplace=False),
         torch.nn.Linear(in_features=2048, out_features=20, bias=True)
     )
-
-    # for param in model.classifier.parameters():
-    #     param.requires_grad = True
-    
     optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
     return model, optimizer
 
