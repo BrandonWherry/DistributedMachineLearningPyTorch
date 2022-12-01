@@ -29,7 +29,10 @@ from math import floor, ceil
 
 def ddp_setup():
     """Initialzes the backend method for gradient synchronization, and is a key part in
-        enabling Distributed Data Parallel training on cuda GPUs.
+        enabling Distributed Data Parallel training on cuda GPUs. Use 'nccl' for cuda GPU
+
+        process_group creates 1 process per GPU. So a multiGPU system with 4 GPUs will now
+        have 4 processes. Torchrun manages the details of this.
     """
     init_process_group(backend="nccl")
 
@@ -60,7 +63,7 @@ class Trainer:
         if os.path.exists(save_path):
             print("Loading snapshot")
             self._load_snapshot(save_path)
-        #Key DDP Wrapper, this allows Distributed Data Parallel Training on the model
+        #Key DDP Wrapper, this allows Distributed Data Parallel Training on model
         self.model = DDP(self.model, device_ids=[self.local_rank])
 
 
@@ -95,16 +98,20 @@ class Trainer:
 
     def _run_epoch(self, epoch):
         b_sz = len(next(iter(self.train_data))[0])
-        print(f"[GPU{self.global_rank}] Epoch {epoch} | Batchsize: {b_sz} | Steps: {len(self.train_data)} | Best Validation Loss: {self.lowest_loss}")
+        print(f"[GPU{self.global_rank}] Epoch {epoch} | Batchsize: {b_sz}", end="")
+        print(f"| Steps: {len(self.train_data)} | Best Validation Loss: {self.lowest_loss}")
         self.train_data.sampler.set_epoch(epoch)
         train_loss = 0
         valid_loss = 0
 
         # Train Loop
         for source, targets in self.train_data:
+            start = time()
             source = source.to(self.local_rank)
             targets = targets.to(self.local_rank)
             train_loss += self._run_batch(source, targets)
+            elapsed_time = time() - start
+            print(f"Step time: {elapsed_time:.2f}")
 
         # Calculating Validation loss
         for source, targets in self.valid_data:
@@ -124,7 +131,8 @@ class Trainer:
             "RUN_TIME": self.run_time,
             "TRAIN_HISTORY" : self.train_loss_history,
             "VALID_HISTORY" : self.valid_loss_history,
-            "LOWEST_LOSS" : self.lowest_loss} 
+            "LOWEST_LOSS" : self.lowest_loss
+        }
         torch.save(snapshot, self.snapshot_path)
         print(f"Epoch {epoch} | Training snapshot saved at {self.snapshot_path}")
 
@@ -179,7 +187,7 @@ def load_train_objs():
         param.requires_grad = True
     
     optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
-    return DDP(model), optimizer
+    return model, optimizer
 
 
 def prepare_dataloader(batch_size: int):
