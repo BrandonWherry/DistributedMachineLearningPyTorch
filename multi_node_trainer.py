@@ -213,7 +213,6 @@ def prepare_dataloader(batch_size: int):
 def main(max_run_time: float, batch_size: int, snapshot_name: str):
     ddp_setup()
     model, optimizer = load_train_objs()
-    print('debug:', batch_size)
     train_data, valid_data = prepare_dataloader(batch_size)
     trainer = Trainer(model, train_data, valid_data, optimizer, max_run_time, snapshot_name)
     trainer.train()
