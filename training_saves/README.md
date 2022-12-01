@@ -1,0 +1,1 @@
+# This folder is used to contain all checkpoints, logs, and saved metrics from training.
