@@ -227,4 +227,5 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', default=64, help='Input batch size on each device (default: 64)')
     args = parser.parse_args()
     
+    print('debug', args.batch_size)
     main(args.train_time, args.batch_size, args.model_name)
