@@ -137,18 +137,21 @@ class Trainer:
     def train(self):
         exited_epoch_num = self.epochs_run
         for epoch in range(self.epochs_run, self.epochs_run + 1000):
-            start = time()
+            elapsed_time = time()
             self._run_epoch(epoch)
             if self.valid_loss_history[-1] < self.lowest_loss:
-                self._save_snapshot(epoch)
+                elapsed_time = time() - elapsed_time
+                self.run_time += elapsed_time
+                elapsed_time = time()
                 self.lowest_loss = self.valid_loss_history[-1]
-            elapsed_time = time() - start
-            self.run_time += elapsed_time
+                self._save_snapshot(epoch + 1)
             print(f'Current train time: {self.run_time:.2f} seconds')
             if (self.run_time > self.max_run_time):
                 print(f"Training completed. Total train time: {self.run_time:.2f}")
                 break
             exited_epoch_num += 1
+            elapsed_time = time() - elapsed_time
+            self.run_time += elapsed_time
         
 
         #Saving import metrics to analyze training on local machine
