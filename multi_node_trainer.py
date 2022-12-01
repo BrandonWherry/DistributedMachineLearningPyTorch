@@ -213,6 +213,7 @@ def prepare_dataloader(batch_size: int):
 def main(max_run_time: float, batch_size: int, snapshot_name: str):
     ddp_setup()
     model, optimizer = load_train_objs()
+    print('debug:', batch_size)
     train_data, valid_data = prepare_dataloader(batch_size)
     trainer = Trainer(model, train_data, valid_data, optimizer, max_run_time, snapshot_name)
     trainer.train()
@@ -227,5 +228,4 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', default=64, help='Input batch size on each device (default: 64)')
     args = parser.parse_args()
     
-    print('debug', args.batch_size)
     main(args.train_time, args.batch_size, args.model_name)
