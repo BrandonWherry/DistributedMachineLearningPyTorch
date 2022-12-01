@@ -29,7 +29,10 @@ from math import floor, ceil
 
 def ddp_setup():
     """Initialzes the backend method for gradient synchronization, and is a key part in
-        enabling Distributed Data Parallel training on cuda GPUs.
+        enabling Distributed Data Parallel training on cuda GPUs. Use 'nccl' for cuda GPU
+
+        process_group creates 1 process per GPU. So a multiGPU system with 4 GPUs will now
+        have 4 processes. Torchrun manages the details of this.
     """
     init_process_group(backend="nccl")
 
@@ -60,7 +63,7 @@ class Trainer:
         if os.path.exists(save_path):
             print("Loading snapshot")
             self._load_snapshot(save_path)
-        #Key DDP Wrapper, this allows Distributed Data Parallel Training on the model
+        #Key DDP Wrapper, this allows Distributed Data Parallel Training on model
         self.model = DDP(self.model, device_ids=[self.local_rank])
 
 
