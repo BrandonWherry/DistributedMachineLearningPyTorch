@@ -187,7 +187,7 @@ def load_train_objs():
         param.requires_grad = True
     
     optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
-    return DDP(model), optimizer
+    return model, optimizer
 
 
 def prepare_dataloader(batch_size: int):
