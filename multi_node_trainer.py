@@ -142,7 +142,7 @@ class Trainer:
             if self.valid_loss_history[-1] < self.lowest_loss:
                 self._save_snapshot(epoch)
                 self.lowest_loss = self.valid_loss_history[-1]
-            elapsed_time = start - time()
+            elapsed_time = time() - start
             self.run_time += elapsed_time
             print(f'Epoch time: {elapsed_time:.2f}')
             if (self.run_time > self.max_run_time):
@@ -222,7 +222,7 @@ def main(max_run_time: float, batch_size: int, snapshot_name: str):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='distributed training job')
-    parser.add_argument('--train_time', default=0.5, help='How long do you want to train, in hours (default 30 minutes)')
+    parser.add_argument('--train_time', default=0.5, type=float, help='How long do you want to train, in hours (default 30 minutes)')
     parser.add_argument('--model_name', default='model_snapshot.pt', help='Input the save name of model (default: model_snapshot.pt)')
     parser.add_argument('--batch_size', default=64, type=int, help='Input batch size on each device (default: 64)')
     args = parser.parse_args()
