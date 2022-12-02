@@ -8,8 +8,8 @@ b_sz=${5:-64}
 echo "Test"
 
 # Executing torchrun on a single worker
-torchrun     \ 
---nproc_per_node=1                \ 
+torchrun                            \ 
+--nproc_per_node=1                  \ 
 --nnodes="$world_size"              \ 
 --node_rank="$worker_num"           \ 
 --rdzv_id=123                       \
