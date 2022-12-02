@@ -2,6 +2,9 @@
 train_time=${1:-0.25}
 model_name=${2:-model}
 b_sz=${3:-64}
+
+
+# one node
 torchrun                        \
 --standalone                    \
 --nproc_per_node=1            \
