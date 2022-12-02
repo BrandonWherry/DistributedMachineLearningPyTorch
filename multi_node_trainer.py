@@ -19,7 +19,7 @@ def ddp_setup():
         enabling Distributed Data Parallel training on cuda GPUs. Use 'nccl' for cuda GPU
 
         process_group creates 1 process per GPU. So a multiGPU system with 4 GPUs will now
-        have 4 processes. Torchrun manages the details of this.
+        have 4 child processes. Torchrun manages the details of this.
     """
     init_process_group(backend="nccl")
 
@@ -74,13 +74,16 @@ def create_dataloaders(batch_size: int, data_path: str) -> Tuple[DataLoader, Dat
 
 
 def main(max_run_time: float, batch_size: int, snapshot_name: str, data_path='data/train'):
+    print('Here1')
     ddp_setup()
+    print('Here2')
     train_data, valid_data = create_dataloaders(batch_size, data_path)
     model, loss_func, optimizer = create_train_objs()
+    print('Here3')
     trainer = Trainer(model, train_data, valid_data, loss_func,
                       optimizer, max_run_time, snapshot_name)
     trainer.train()
-    destroy_process_group()
+    destroy_process_group() # cleans up after multigpu training
 
 
 if __name__ == "__main__":
