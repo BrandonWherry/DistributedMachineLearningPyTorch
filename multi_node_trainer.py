@@ -39,7 +39,7 @@ def create_train_objs() -> Tuple[torch.nn.Module, Callable, torch.optim.Optimize
         torch.nn.Linear(in_features=2048, out_features=20, bias=True)
     )
     loss_func = F.cross_entropy
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.0001)
     return model, loss_func, optimizer
 
 
