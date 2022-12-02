@@ -47,9 +47,13 @@ class Trainer:
         self.lowest_loss = np.Inf
         self.train_loss = np.Inf
         self.valid_loss = np.Inf
+        # Loading in existing training session if the save destination already exists
         if os.path.exists(self.save_path):
             print("Loading snapshot")
             self._load_snapshot(self.save_path)
+        if self.train_loss_history:
+            self.train_loss = self.train_loss_history[-1]
+            self.valid_loss = self.valid_loss_history[-1]
         # Key DDP Wrapper, this allows Distributed Data Parallel Training on model
         self.model = DDP(self.model, device_ids=[self.local_rank])
 
@@ -87,7 +91,7 @@ class Trainer:
         print(
             f"| Steps: {len(self.train_data)} ", end="")
         print(
-            f"| T_loss: {self.train_loss} | V_loss: {self.valid_loss}")
+            f"| T_loss: {self.train_loss:.3f} | V_loss: {self.valid_loss:.3f}")
         self.train_data.sampler.set_epoch(self.epochs_run)
         train_loss = 0
         valid_loss = 0
@@ -131,14 +135,14 @@ class Trainer:
             self.epoch_times.append(elapsed_time)
             start = time()
             self.epochs_run += 1
-            if self.valid_loss_history[-1] < self.lowest_loss:
+            if self.valid_loss_history[-1] < self.lowest_loss and self.local_rank == 0:
                 self.lowest_loss = self.valid_loss_history[-1]
                 self._save_snapshot()
             elapsed_time = time() - start
             self.run_time += elapsed_time
             self.epoch_times[-1] += elapsed_time
             print(
-                f'Train time: {(self.run_time//60**2):.2f} hr {((self.run_time%60.0**2)//60.0):.2f} min')
+                f'\nCurrent Train Time: {self.run_time//60**2} hours & {((self.run_time%60.0**2)/60.0):.2f} minutes')
             if (self.run_time > self.max_run_time):
                 print(
                     f"Training completed -> Total train time: {self.run_time:.2f} seconds")
