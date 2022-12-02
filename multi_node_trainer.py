@@ -74,7 +74,7 @@ def create_dataloaders(batch_size: int, data_path: str) -> Tuple[DataLoader, Dat
 
 def main(max_run_time: float, batch_size: int, snapshot_name: str, data_path='data/train'):
     ddp_setup()
-    train_data, valid_data = create_dataloaders(batch_size, root=data_path)
+    train_data, valid_data = create_dataloaders(batch_size, data_path)
     model, loss_func, optimizer = create_train_objs()
     trainer = Trainer(model, train_data, valid_data, loss_func,
                       optimizer, max_run_time, snapshot_name)
