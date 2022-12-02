@@ -31,10 +31,10 @@ def create_train_objs() -> Tuple[torch.nn.Module, Callable, torch.optim.Optimize
     model.classifier = torch.nn.Sequential(
         torch.nn.Linear(in_features=25088, out_features=4096, bias=True),
         torch.nn.ReLU(inplace=True),
-        torch.nn.Dropout(p=0.5, inplace=False),
+        torch.nn.Dropout(p=0.6, inplace=False),
         torch.nn.Linear(in_features=4096, out_features=2048, bias=True),
         torch.nn.ReLU(inplace=True),
-        torch.nn.Dropout(p=0.5, inplace=False),
+        torch.nn.Dropout(p=0.6, inplace=False),
         torch.nn.Linear(in_features=2048, out_features=20, bias=True)
     )
     loss_func = F.cross_entropy
