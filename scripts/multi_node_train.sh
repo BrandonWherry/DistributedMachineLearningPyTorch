@@ -3,10 +3,13 @@ train_time=${1:-0.25}
 worker_num=${2:-0}
 world_size=${3:-1}
 model_name=${4:-model}
-batch_size=${5:-64}
+b_sz=${5:-64}
 
-torchrun                            \ 
---nproc_per_node=gpu                \ 
+echo "Test"
+
+# Executing torchrun on a single worker
+torchrun     \ 
+--nproc_per_node=1                \ 
 --nnodes="$world_size"              \ 
 --node_rank="$worker_num"           \ 
 --rdzv_id=123                       \
@@ -15,5 +18,5 @@ torchrun                            \
 multi_node_trainer.py               \
 --train_time="$train_time"          \ 
 --model_name="$model_name.pt"       \
---batch_size="$batch_size"          \
+--batch_size="$b_sz"                \
 2>&1 | tee "training_saves/$model_name.log"

@@ -9,36 +9,36 @@ cat useful_server_commands.txt
 
 #One Worker Script
 
-bash scripts/one_node_train.sh 3.0 single_node 64
+bash scripts/one_node_train.sh 2.0 one_node 64
 
 #########################################################
 #########################################################
 
 #Two Worker Scripts
 
-bash scripts/multi_node_train.sh 3.0 0 2 two_worker 64
-bash scripts/multi_node_train.sh 3.0 1 2 two_worker 64
+bash scripts/multi_node_train.sh 2.0 0 2 two_nodes 64
+bash scripts/multi_node_train.sh 2.0 1 2 two_nodes 64
 
 #########################################################
 #########################################################
 
 #Four Worker Scripts
 
-bash scripts/multi_node_train.sh 3.0 0 4 four_worker 64
-bash scripts/multi_node_train.sh 3.0 1 4 four_worker 64
-bash scripts/multi_node_train.sh 3.0 2 4 four_worker 64
-bash scripts/multi_node_train.sh 3.0 3 4 four_worker 64
+bash scripts/multi_node_train.sh 3.0 0 4 four_nodes 64
+bash scripts/multi_node_train.sh 3.0 1 4 four_nodes 64
+bash scripts/multi_node_train.sh 3.0 2 4 four_nodes 64
+bash scripts/multi_node_train.sh 3.0 3 4 four_nodes 64
 
 #########################################################
 #########################################################
 
 #Eight Worker Scripts
 
-bash scripts/multi_node_train.sh 3.0 0 8 eight_worker 64
-bash scripts/multi_node_train.sh 3.0 1 8 eight_worker 64
-bash scripts/multi_node_train.sh 3.0 2 8 eight_worker 64
-bash scripts/multi_node_train.sh 3.0 3 8 eight_worker 64
-bash scripts/multi_node_train.sh 3.0 4 8 eight_worker 64
-bash scripts/multi_node_train.sh 3.0 5 8 eight_worker 64
-bash scripts/multi_node_train.sh 3.0 6 8 eight_worker 64
-bash scripts/multi_node_train.sh 3.0 7 8 eight_worker 64
+bash scripts/multi_node_train.sh 3.0 0 8 eight_node 64
+bash scripts/multi_node_train.sh 3.0 1 8 eight_node 64
+bash scripts/multi_node_train.sh 3.0 2 8 eight_node 64
+bash scripts/multi_node_train.sh 3.0 3 8 eight_node 64
+bash scripts/multi_node_train.sh 3.0 4 8 eight_node 64
+bash scripts/multi_node_train.sh 3.0 5 8 eight_node 64
+bash scripts/multi_node_train.sh 3.0 6 8 eight_node 64
+bash scripts/multi_node_train.sh 3.0 7 8 eight_node 64
