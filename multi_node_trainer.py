@@ -25,8 +25,9 @@ def ddp_setup():
 
 
 def create_train_objs() -> Tuple[torch.nn.Module, Callable, torch.optim.Optimizer]:
-    model = vgg19()
+    model = vgg19(weights='IMAGENET1K_V1')
     # Replacing classifier for only 20 outputs, from 1000
+    # Classifier will train from scratch, while encoder begins with pretrained weights
     model.classifier = torch.nn.Sequential(
         torch.nn.Linear(in_features=25088, out_features=4096, bias=True),
         torch.nn.ReLU(inplace=True),
