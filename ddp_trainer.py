@@ -78,7 +78,7 @@ class Trainer:
     def _run_epoch(self):
         b_sz = len(next(iter(self.train_data))[0])
         print(
-            f"/n[GPU{self.global_rank}] Epoch: {self.epochs_run} | Batch_sz: {b_sz} ", end="")
+            f"\n[GPU{self.global_rank}] Epoch: {self.epochs_run} | Batch_sz: {b_sz} ", end="")
         print(
             f"| Steps: {len(self.train_data)} | Validation Loss: {self.lowest_loss:.4f}")
         self.train_data.sampler.set_epoch(self.epochs_run)
