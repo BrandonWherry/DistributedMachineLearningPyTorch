@@ -25,6 +25,8 @@ class Trainer:
         max_run_time: float,
         snapshot_name: str,
     ) -> None:
+        self.local_rank = int(os.environ["LOCAL_RANK"]) # Torchrun assigns many environment variables
+        self.global_rank = int(os.environ["RANK"])
         self.model = model.to(self.local_rank)
         self.train_data = train_data
         self.valid_data = valid_data
@@ -33,8 +35,7 @@ class Trainer:
         self.max_run_time = max_run_time * 60**2  # Hours to seconds, training will stop at this time
         self.save_path = "training_saves/" + snapshot_name
 
-        self.local_rank = int(os.environ["LOCAL_RANK"]) # Torchrun assigns many environment variables
-        self.global_rank = int(os.environ["RANK"])
+        
         self.epochs_run = 0  # current epoch tracker
         self.run_time = 0.0  # current run_time tracker
         self.train_loss_history = list()
