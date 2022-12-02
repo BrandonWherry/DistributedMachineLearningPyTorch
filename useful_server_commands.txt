@@ -8,7 +8,7 @@ source activate pytorch
 
 #One Worker Script
 
-bash scripts/single_node_train.sh 3.0 single_node 64
+bash scripts/one_node_train.sh 3.0 single_node 64
 
 #########################################################
 #########################################################
