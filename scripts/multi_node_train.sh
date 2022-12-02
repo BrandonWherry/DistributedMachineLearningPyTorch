@@ -4,11 +4,7 @@ worker_num=${2:-0}
 world_size=${3:-1}
 model_name=${4:-model}
 b_sz=${5:-64}
-
-echo "Test"
-
-# Executing torchrun on a single worker
-torchrun                            \ 
+torchrun \ 
 --nproc_per_node=1                  \ 
 --nnodes="$world_size"              \ 
 --node_rank="$worker_num"           \ 
