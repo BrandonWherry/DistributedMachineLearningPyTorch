@@ -10,7 +10,7 @@ torchrun                        \
 multi_node_trainer.py           \
 --train_time="$train_time"      \
 --model_name="$model_name.pt"   \
---batch_size="$b_sz"      \
+--batch_size="$b_sz"            \
 2>&1 | tee "training_saves/$model_name.log"
 
 
