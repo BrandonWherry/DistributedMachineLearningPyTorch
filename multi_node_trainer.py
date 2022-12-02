@@ -14,7 +14,6 @@ from math import floor, ceil
 from ddp_trainer import Trainer
 from typing import Callable, Tuple
 
-print('Here')
 
 def ddp_setup():
     """Initialzes the backend method for gradient synchronization, and is a key part in
