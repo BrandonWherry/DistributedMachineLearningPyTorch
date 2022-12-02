@@ -12,9 +12,11 @@ from torch.utils.data import DataLoader
 import numpy as np
 from torch.nn.parallel import DistributedDataParallel as DDP
 
+
 class Trainer:
     """Trainer Class to assist with DDP training
     """
+
     def __init__(
         self,
         model: torch.nn.Module,
@@ -25,23 +27,26 @@ class Trainer:
         max_run_time: float,
         snapshot_name: str,
     ) -> None:
-        self.local_rank = int(os.environ["LOCAL_RANK"]) # Torchrun assigns many environment variables
+        # Torchrun assigns many environment variables
+        self.local_rank = int(os.environ["LOCAL_RANK"])
         self.global_rank = int(os.environ["RANK"])
         self.model = model.to(self.local_rank)
         self.train_data = train_data
         self.valid_data = valid_data
         self.loss_func = loss_func
         self.optimizer = optimizer
-        self.max_run_time = max_run_time * 60**2  # Hours to seconds, training will stop at this time
+        # Hours to seconds, training will stop at this time
+        self.max_run_time = max_run_time * 60**2
         self.save_path = "training_saves/" + snapshot_name
 
-        
         self.epochs_run = 0  # current epoch tracker
         self.run_time = 0.0  # current run_time tracker
         self.train_loss_history = list()
         self.valid_loss_history = list()
         self.epoch_times = list()
         self.lowest_loss = np.Inf
+        self.train_loss = np.Inf
+        self.valid_loss = np.Inf
         if os.path.exists(self.save_path):
             print("Loading snapshot")
             self._load_snapshot(self.save_path)
@@ -78,9 +83,11 @@ class Trainer:
     def _run_epoch(self):
         b_sz = len(next(iter(self.train_data))[0])
         print(
-            f"\n[GPU{self.global_rank}] Epoch: {self.epochs_run} | Batch_sz: {b_sz} ", end="")
+            f"\n[GPU{self.global_rank}] Epoch: {self.epochs_run} | Batch_SZ: {b_sz} ", end="")
         print(
-            f"| Steps: {len(self.train_data)} | Validation Loss: {self.lowest_loss:.4f}")
+            f"| Steps: {len(self.train_data)} ", end="")
+        print(
+            f"| T_loss: {self.train_loss} | V_loss: {self.valid_loss}")
         self.train_data.sampler.set_epoch(self.epochs_run)
         train_loss = 0
         valid_loss = 0
@@ -100,6 +107,7 @@ class Trainer:
         # Update loss histories
         self.train_loss_history.append(train_loss/len(self.train_data))
         self.valid_loss_history.append(valid_loss/len(self.valid_data))
+        self.train_loss, self.valid_loss = self.train_loss_history[-1], self.valid_loss_history[-1]
 
     def _save_snapshot(self):
         snapshot = {
