@@ -1,7 +1,8 @@
 ## useful server commands (for copy paste purposes on EC2 VMs)
-## cat server_commands for easy copy/paste into terminal
 
 source activate pytorch
+
+cat useful_server_commands.txt
 
 #########################################################
 #########################################################
