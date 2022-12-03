@@ -1,0 +1,182 @@
+Learning Rate = 0.00020000
+
+[GPU0] Epoch: 0 | Batch_SZ: 32 | Steps: 163 | T_loss: inf | V_loss: inf
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 3.42 minutes
+
+[GPU0] Epoch: 1 | Batch_SZ: 32 | Steps: 163 | T_loss: 2.988 | V_loss: 2.808
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 6.88 minutes
+
+[GPU0] Epoch: 2 | Batch_SZ: 32 | Steps: 163 | T_loss: 2.813 | V_loss: 2.586
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 10.26 minutes
+
+[GPU0] Epoch: 3 | Batch_SZ: 32 | Steps: 163 | T_loss: 2.591 | V_loss: 2.223
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 13.64 minutes
+
+[GPU0] Epoch: 4 | Batch_SZ: 32 | Steps: 163 | T_loss: 2.231 | V_loss: 1.737
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 16.99 minutes
+
+[GPU0] Epoch: 5 | Batch_SZ: 32 | Steps: 163 | T_loss: 1.888 | V_loss: 1.289
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 20.33 minutes
+
+[GPU0] Epoch: 6 | Batch_SZ: 32 | Steps: 163 | T_loss: 1.566 | V_loss: 0.995
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 23.67 minutes
+
+[GPU0] Epoch: 7 | Batch_SZ: 32 | Steps: 163 | T_loss: 1.345 | V_loss: 0.819
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 27.00 minutes
+
+[GPU0] Epoch: 8 | Batch_SZ: 32 | Steps: 163 | T_loss: 1.172 | V_loss: 0.722
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 30.34 minutes
+
+[GPU0] Epoch: 9 | Batch_SZ: 32 | Steps: 163 | T_loss: 1.034 | V_loss: 0.646
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 33.67 minutes
+
+[GPU0] Epoch: 10 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.959 | V_loss: 0.591
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 37.01 minutes
+
+[GPU0] Epoch: 11 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.905 | V_loss: 0.554
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 40.33 minutes
+
+[GPU0] Epoch: 12 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.813 | V_loss: 0.527
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 43.66 minutes
+
+[GPU0] Epoch: 13 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.778 | V_loss: 0.504
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 47.00 minutes
+
+[GPU0] Epoch: 14 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.761 | V_loss: 0.481
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 50.31 minutes
+
+[GPU0] Epoch: 15 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.708 | V_loss: 0.467
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 53.64 minutes
+
+[GPU0] Epoch: 16 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.681 | V_loss: 0.454
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 0.0 hours & 56.99 minutes
+
+[GPU0] Epoch: 17 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.633 | V_loss: 0.444
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 0.32 minutes
+
+[GPU0] Epoch: 18 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.617 | V_loss: 0.433
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 3.67 minutes
+
+[GPU0] Epoch: 19 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.627 | V_loss: 0.426
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 7.03 minutes
+
+[GPU0] Epoch: 20 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.611 | V_loss: 0.418
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 10.39 minutes
+
+[GPU0] Epoch: 21 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.567 | V_loss: 0.409
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 13.75 minutes
+
+[GPU0] Epoch: 22 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.558 | V_loss: 0.405
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 17.10 minutes
+
+[GPU0] Epoch: 23 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.554 | V_loss: 0.399
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 20.46 minutes
+
+[GPU0] Epoch: 24 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.535 | V_loss: 0.394
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 23.81 minutes
+
+[GPU0] Epoch: 25 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.517 | V_loss: 0.391
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 27.14 minutes
+
+[GPU0] Epoch: 26 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.493 | V_loss: 0.387
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 30.47 minutes
+
+[GPU0] Epoch: 27 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.491 | V_loss: 0.380
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 33.81 minutes
+
+[GPU0] Epoch: 28 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.477 | V_loss: 0.377
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 37.16 minutes
+
+[GPU0] Epoch: 29 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.460 | V_loss: 0.374
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 40.50 minutes
+
+[GPU0] Epoch: 30 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.469 | V_loss: 0.372
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 43.83 minutes
+
+[GPU0] Epoch: 31 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.454 | V_loss: 0.369
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 47.16 minutes
+
+[GPU0] Epoch: 32 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.441 | V_loss: 0.365
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 50.51 minutes
+
+[GPU0] Epoch: 33 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.431 | V_loss: 0.362
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 53.84 minutes
+
+[GPU0] Epoch: 34 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.451 | V_loss: 0.361
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 1.0 hours & 57.18 minutes
+
+[GPU0] Epoch: 35 | Batch_SZ: 32 | Steps: 163 | T_loss: 0.436 | V_loss: 0.358
+Training snapshot saved at training_saves/four_nodes.pt
+
+Current Train Time: 2.0 hours & 0.52 minutes
+Training completed -> Total train time: 7230.93 seconds
