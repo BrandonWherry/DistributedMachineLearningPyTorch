@@ -63,21 +63,21 @@ In each experiment, I trained for 2 hours.
 ***
 
 
-> # __Results with Pytorch's DDP strategy__
+> # __Results with Pytorch's DDP Strategy__
 ***
 
-|                    | 1 Node    | 2 Nodes | 4 Nodes | 8 Nodes |
-|      ---           |     ---   | ---     | ---     |   ---   |
-| __Learning Rate (e-4)__   | 1.00    | 1.41 | 2.00 | 2.83
-| __Global Batch Size__     | 32      |  64  | 128 | 256
-| __Steps Per Epoch__       | 650     | 375  | 163 | 82
-| __Avg Epoch Time(min)__        | xxx     | 
-| __Epoch Num @ 2 hr__            | xxx     | 
-| __Images Per Sec__        | xxx     |
-| __Scaling Efficiency__    | xxx     |
-| __Best Validation Loss__  | xxx     |
-| __Best Train Loss__  | xxx     |
-| __Top1 Test Accuracy__    | 86.90%  |      | 87.50%
+|                           | 1 Node  | 2 Nodes | 4 Nodes | 8 Nodes |
+|      ---                  |     --- | ---     | ---     |   ---   |
+| __Learning Rate (e-4)__   | 1.00    | 1.41    | 2.00 | 2.83 |
+| __Global Batch Size__     | 32      |  64     | 128 | 256 |
+| __Steps Per Epoch__       | 650     | 375     | 163 | 82 |
+| __Avg Epoch Time(min)__   | xxx     |         |
+| __Epoch Num @ 2 hr__      | xxx     |         |
+| __Images Per Sec__        | xxx     |       |
+| __Scaling Efficiency__    | xxx     |       |
+| __Best Validation Loss__  | xxx     |       |
+| __Test Loss__             | xxx     |  0.435    | 0.429 
+| __Top1 Test Accuracy__    | 86.90%  | 87.30%    | 87.50%
 
 ***
 
