@@ -1,6 +1,18 @@
 # __Distributed Machine Learning in PyTorch__  
 ***
- __This project is intended to explore PyTorch's Distributed ML training capabilities, specifically, the Distributed Data Parallel strategy (DDP).__
+__This project is intended to explore PyTorch's Distributed ML training capabilities, specifically, the Distributed Data Parallel strategy (DDP).__
+
+  
+file | description
+--- | --- 
+model_tester.ipynb | used for testing trained models
+dataloader_visualization.ipynb | visualizing data
+ddp_trainer.py | trainer class definition for DDP training
+multi_node_trainer.py | driver code for single and multinode training
+scripts/ | used to easily execute training code on EC2 VMs with pytorch's torchrun
+
+
+
 ***
 
 > ## __One Worker Script__
@@ -31,23 +43,27 @@ __See useful_server_commands.txt for more examples. Note, need to configure mast
 `SAVE_NAME = name for saving checkpoints, metrics`  
 `BATCH_SIZE = Batch Size per device `
 
-> # __DDP Enabling Code in PyTorch__
+> # __DDP-Enabling Code in PyTorch__
 ***
 
 
 
-> # __Testing Results & Conclusions__
+> # __AWS Details__
 ***
 
-For PyTorch DDP testing, I used 1/50 of imageNet on a modified VGG19 model, training on 1, 2, 4, and 8 AWS EC2 instances.
+For PyTorch DDP testing I trained the same model with the same data on 1, 2, 4, and 8 AWS EC2 instances.
 
 Instance Type | __g4dn.2xlarge - 8 vCPUs - 1 Nvidia T4 GPU__
 ---|---
 __Network Speed__ | __25 GB/s__
 
-In each experiment (1, 2, 4 and 8 nodes), I trained for 2 hours.
+In each experiment, I trained for 2 hours.
 
-> ## __Results with Pytorch's DDP strategy__
+> # __Model & Data__
+***
+
+
+> # __Results with Pytorch's DDP strategy__
 ***
 
 |                    | 1 Node    | 2 Nodes | 4 Nodes | 8 Nodes |
