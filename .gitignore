@@ -3,7 +3,7 @@
 EC2.pem
 presentation_stuff
 saved_trained_models/eight_nodes.pt
-__pycache__
 saved_trained_output/two_nodes.pt
 saved_trained_output/one_node.pt
 saved_trained_output/four_nodes.pt
+__pycache__
