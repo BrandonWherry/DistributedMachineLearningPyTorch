@@ -18,16 +18,20 @@ from math import sqrt
 
 
 def ddp_setup():
-    """Initialzes the backend method for gradient synchronization, and is a key part in
+    """Initialzes the backend method for gradient synchronization. This is a key part in
         enabling Distributed Data Parallel training on cuda GPUs. Use 'nccl' for cuda GPU
 
-        process_group creates 1 process per GPU. So a multiGPU system with 4 GPUs will now
-        have 4 child processes. Torchrun manages the details of this.
+        init_process_group() creates 1 process per GPU. Torchrun manages the details of this.
     """
     init_process_group(backend="nccl")
 
 
 def create_train_objs() -> Tuple[torch.nn.Module, Callable, torch.optim.Optimizer]:
+    """Used to instantiate 3 training objects. Model, loss_func, and Optimizer
+
+    Returns:
+        Tuple[torch.nn.Module, Callable, torch.optim.Optimizer]: tuple of model, Loss Function, and Optimizer
+    """
     model = vgg19(weights='IMAGENET1K_V1')
     # Replacing classifier with only 20 outputs (from 1000)
     # Classifier will train from scratch, while encoder begins with pretrained weights
@@ -48,27 +52,38 @@ def create_train_objs() -> Tuple[torch.nn.Module, Callable, torch.optim.Optimize
     return model, loss_func, optimizer
 
 
-def create_dataloaders(batch_size: int, data_path: str) -> Tuple[DataLoader, DataLoader]:
+def create_dataloaders(batch_size: int, data_path: str
+    ) -> Tuple[DataLoader, DataLoader]:
+    """Used to instantiate 2 Dataloaders for DDP training.
+
+    Args:
+        batch_size (int): batch size of each device
+        data_path (str): path to dataset
+
+    Returns:
+        Tuple[DataLoader, DataLoader]: tuple of training and validation dataloaders
+    """
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
-                             0.229, 0.224, 0.225])
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], 
+                              std=[0.229, 0.224, 0.225])
     ])
+
     combined_data = ImageFolder(root=data_path, transform=transform)
     train_split = ceil(len(combined_data) * 0.80)
     valid_split = floor(len(combined_data) * 0.20)
     generator = torch.Generator()
-    # Each machine must get the same data across all machines
-    generator.manual_seed(42)
+    generator.manual_seed(42) # Ensures that each gpu has the same validation data
+
     train_data, valid_data = random_split(
         combined_data, [train_split, valid_split], generator=generator)
+
     train_loader = DataLoader(
         train_data,
         batch_size=batch_size,
-        pin_memory=True,
-        shuffle=False,  # No need for shuffling, as it can mess up the sampler
-        # The sampler will make sure that the batches are different across each process in cluster
+        pin_memory=True, # Allocates samples into page-locked memory, speeds up data transfer to GPU
+        shuffle=False,  # No need for shuffling, as it can mess up the distributed sampler
         sampler=DistributedSampler(train_data)
     )
     valid_loader = DataLoader(
