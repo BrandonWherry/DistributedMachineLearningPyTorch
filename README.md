@@ -68,6 +68,7 @@ In each experiment, I trained for 2 hours.
 
 |                    | 1 Node    | 2 Nodes | 4 Nodes | 8 Nodes |
 |      ---           |     ---   | ---     | ---     |   ---   |
+<<<<<<< HEAD
 | __Learning Rate (e-4)__   | 1.00    | 1.41 | 2.00 | 2.83
 | __Global Batch Size__     | 32      |  64  | 128 | 256
 | __Steps Per Epoch__       | 650     | 375  | 163 | 82
@@ -78,6 +79,16 @@ In each experiment, I trained for 2 hours.
 | __Best Validation Loss__  | xxx     |
 | __Best Train Loss__  | xxx     |
 | __Top1 Test Accuracy__    | 86.90%  |      | 87.50%
+=======
+| __Learning Rate__  (e-4) | 1    | 1.41
+| __Global Batch Size__ | 32    | 64
+| __Steps Per Epoch__ | 650    | 375
+| __AvgEpochTime__ | xxx    | 
+| __Images per sec__    | xxx       |
+| __Scaling efficiency__    | xxx       |
+| __V_loss__         | xxx       |
+| __Top1 acc__       | 86.90%       |
+>>>>>>> 4a4d6fa6cc2093b49cd29faf2d45ee3ede15e3cc
 
 ***
 
