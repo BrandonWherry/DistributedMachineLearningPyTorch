@@ -11,7 +11,7 @@ from typing import Callable
 from torch.utils.data import DataLoader
 import numpy as np
 from torch.nn.parallel import DistributedDataParallel as DDP
-
+from math import sqrt
 
 class Trainer:
     """Trainer Class to assist with DDP training
@@ -108,7 +108,7 @@ class Trainer:
             targets = targets.to(self.local_rank)
             valid_loss += self._calc_validation_loss(source, targets)
 
-        # Update loss histories
+        # Update loss history
         self.train_loss_history.append(train_loss/len(self.train_data))
         self.valid_loss_history.append(valid_loss/len(self.valid_data))
         self.train_loss, self.valid_loss = self.train_loss_history[-1], self.valid_loss_history[-1]

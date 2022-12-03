@@ -1,5 +1,6 @@
 """DDP Training Script
 """
+import os
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
@@ -13,6 +14,7 @@ from torch.utils.data import random_split
 from math import floor, ceil
 from ddp_trainer import Trainer
 from typing import Callable, Tuple
+from math import sqrt
 
 
 def ddp_setup():
@@ -27,7 +29,7 @@ def ddp_setup():
 
 def create_train_objs() -> Tuple[torch.nn.Module, Callable, torch.optim.Optimizer]:
     model = vgg19(weights='IMAGENET1K_V1')
-    # Replacing classifier for only 20 outputs, from 1000
+    # Replacing classifier with only 20 outputs (from 1000)
     # Classifier will train from scratch, while encoder begins with pretrained weights
     model.classifier = torch.nn.Sequential(
         torch.nn.Linear(in_features=25088, out_features=4096, bias=True),
@@ -39,7 +41,10 @@ def create_train_objs() -> Tuple[torch.nn.Module, Callable, torch.optim.Optimize
         torch.nn.Linear(in_features=2048, out_features=20, bias=True)
     )
     loss_func = F.cross_entropy
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.0001)
+    world_size = float(os.environ["WORLD_SIZE"])
+    learning_rate = 0.0001 * sqrt(world_size)
+    print(f"Learning Rate = {learning_rate:.8f}")
+    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
     return model, loss_func, optimizer
 
 
