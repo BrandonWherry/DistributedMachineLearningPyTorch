@@ -40,8 +40,8 @@ __See useful_server_commands.txt for more examples. Note, need to configure mast
 `TRAIN_TIME = Total training time in hours`  
 `WORKER_NUM = worker number`  
 `WORLD_SIZE = Total worker count`    
-`SAVE_NAME = name for saving checkpoints, metrics`  
-`BATCH_SIZE = Batch Size per device `
+`SAVE_NAME = Save name for saving snapshots (For fault tolerance) and training metrics`  
+`BATCH_SIZE = Batch size per device `
 
 > # __DDP-Enabling Code in PyTorch__
 ***
@@ -68,22 +68,26 @@ In each experiment, I trained for 2 hours.
 
 |                    | 1 Node    | 2 Nodes | 4 Nodes | 8 Nodes |
 |      ---           |     ---   | ---     | ---     |   ---   |
-| __Learning Rate__  (e-4) | 1    | 1.41
-| __Global Batch Size__ | 1    | 1.41
-| __Steps Per Epoch__ | 1    | 1.41
-| __AvgEpochTime__ | xxx    | 
-| __Images per sec__    | xxx       |
-| __Scaling efficiency__    | xxx       |
-| __V_loss__         | xxx       |
-| __Top1 acc__       | xxx       |
+| __Learning Rate (e-4)__   | 1.00    | 1.41 | 2.00 | 2.83
+| __Global Batch Size__     | 32      |  64  | 128 | 256
+| __Steps Per Epoch__       | 650     | 375  | 163 | 82
+| __Avg Epoch Time(min)__        | xxx     | 
+| __Epoch Num @ 2 hr__            | xxx     | 
+| __Images Per Sec__        | xxx     |
+| __Scaling Efficiency__    | xxx     |
+| __Best Validation Loss__  | xxx     |
+| __Best Train Loss__  | xxx     |
+| __Top1 Test Accuracy__    | 86.90%  |      | 87.50%
 
 ***
 
 
->__Summary Graphs__
+># __Summary Graphs__
 
 
 
->__Conclusions__
+># __Conclusions on Distributed Training with Pytorch's DDP Strategy__
 
-Scale up before scaling out! Depending on network speeds, it is likely that the communication (gradient synchronization) between nodes will slow down overall training efforts. I recommend connections that exceed 100GB/s, but even those kinds of speeds do no compare to linked GPU transfer speeds. Because of this, I recommend to perform training on multi GPU systems. It's clear that 1 system with 8 GPUs is better than 8 systems with 1 GPU (not certain, but I think this is likely to be hte case). If scaling beyond just 1 system with 8 GPUs, then one can add additional nodes. This may seem obvious, but it wasn't so obvious to me until this experiment (mostly because 8 nodes are likely to have 8x the number of cpu cores, and it's hard to know just how much those CPU extra CPU cores factor in). More testing will be conducted in the future.
+__Scale up before scaling out!__ 
+
+Depending on network speeds, it is very likely that the communication overhead caused by gradient synchronization between nodes will decrease scaling efficiency as the number of workers increases. I recommend connections that exceed 100GB/s, but even those kinds of speeds do no compare to linked GPU transfer speeds. Because of this, I recommend to perform training on multi GPU systems. It's clear that 1 system with 8 GPUs is better than 8 systems with 1 GPU (not certain, but I think this is likely to be hte case). If scaling beyond just 1 system with 8 GPUs, then one can add additional nodes. This may seem obvious, but it wasn't so obvious to me until this experiment (mostly because 8 nodes are likely to have 8x the number of cpu cores, and it's hard to know just how much those CPU extra CPU cores factor in). More testing will be conducted in the future.
