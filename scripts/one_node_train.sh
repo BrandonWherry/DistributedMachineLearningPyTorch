@@ -7,7 +7,7 @@ b_sz=${3:-64}
 # one node
 torchrun                        \
 --standalone                    \
---nproc_per_node=1            \
+--nproc_per_node=gpu            \
 multi_node_trainer.py           \
 --train_time="$train_time"      \
 --model_name="$model_name.pt"   \

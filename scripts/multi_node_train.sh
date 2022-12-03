@@ -6,7 +6,7 @@ model_name=${4:-model}
 b_sz=${5:-64}
 
 
-# two nodes
+# multi node training
 torchrun \
 --nproc_per_node=gpu                \
 --nnodes="$world_size"              \
