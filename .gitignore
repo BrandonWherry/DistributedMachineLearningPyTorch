@@ -3,6 +3,7 @@
 EC2.pem
 presentation_stuff
 trained_models/one_node.pt
-trained_models/two_node.pt
-trained_models/four_node.pt
-trained_models/eight_node.pt
+trained_models/two_nodes.pt
+trained_models/four_nodes.pt
+trained_models/eight_nodes.pt
+__pycache__

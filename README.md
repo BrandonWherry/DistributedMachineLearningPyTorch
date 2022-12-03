@@ -69,13 +69,13 @@ In each experiment, I trained for 2 hours.
 |                    | 1 Node    | 2 Nodes | 4 Nodes | 8 Nodes |
 |      ---           |     ---   | ---     | ---     |   ---   |
 | __Learning Rate__  (e-4) | 1    | 1.41
-| __Global Batch Size__ | 1    | 1.41
-| __Steps Per Epoch__ | 1    | 1.41
+| __Global Batch Size__ | 32    | 64
+| __Steps Per Epoch__ | 650    | 375
 | __AvgEpochTime__ | xxx    | 
 | __Images per sec__    | xxx       |
 | __Scaling efficiency__    | xxx       |
 | __V_loss__         | xxx       |
-| __Top1 acc__       | xxx       |
+| __Top1 acc__       | 86.90%       |
 
 ***
 
