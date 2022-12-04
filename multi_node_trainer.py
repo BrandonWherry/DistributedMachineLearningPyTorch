@@ -18,10 +18,15 @@ from math import sqrt
 
 
 def ddp_setup():
-    """Initialzes the backend method for gradient synchronization. This is a key part in
-        enabling Distributed Data Parallel training on cuda GPUs. Use 'nccl' for cuda GPU
+    """Initialzes the backend method for gradient synchronization.
 
-        init_process_group() creates 1 process per GPU. Torchrun manages the details of this.
+        This setup is a key part in enabling Distributed Data Parallel 
+        training on cuda GPUs. Use 'nccl' for cuda GPUs. init_process_group() 
+        creates 1 process per GPU (if specified via torchrun argument). Torchrun 
+        creates a subprocess for each participating GPU, and assigns many 
+        environmental variables for hte user to use, and for torchrun to coordinate
+        training with all participating workers.
+
     """
     init_process_group(backend="nccl")
 
@@ -53,7 +58,7 @@ def create_train_objs() -> Tuple[torch.nn.Module, Callable, torch.optim.Optimize
 
 
 def create_dataloaders(batch_size: int, data_path: str
-    ) -> Tuple[DataLoader, DataLoader]:
+                       ) -> Tuple[DataLoader, DataLoader]:
     """Used to instantiate 2 Dataloaders for DDP training.
 
     Args:
@@ -66,15 +71,17 @@ def create_dataloaders(batch_size: int, data_path: str
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], 
-                              std=[0.229, 0.224, 0.225])
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225])
     ])
 
     combined_data = ImageFolder(root=data_path, transform=transform)
     train_split = ceil(len(combined_data) * 0.80)
     valid_split = floor(len(combined_data) * 0.20)
+
     generator = torch.Generator()
-    generator.manual_seed(42) # Ensures that each gpu has the same validation data
+    # Ensures that each gpu has the same validation data
+    generator.manual_seed(42)
 
     train_data, valid_data = random_split(
         combined_data, [train_split, valid_split], generator=generator)
@@ -82,10 +89,11 @@ def create_dataloaders(batch_size: int, data_path: str
     train_loader = DataLoader(
         train_data,
         batch_size=batch_size,
-        pin_memory=True, # Allocates samples into page-locked memory, speeds up data transfer to GPU
+        pin_memory=True,  # Allocates samples into page-locked memory, speeds up data transfer to GPU
         shuffle=False,  # No need for shuffling, as it can mess up the distributed sampler
         sampler=DistributedSampler(train_data)
     )
+
     valid_loader = DataLoader(
         valid_data,
         batch_size=batch_size,
@@ -101,7 +109,7 @@ def main(max_run_time: float, batch_size: int, snapshot_name: str, data_path='da
     trainer = Trainer(model, train_data, valid_data, loss_func,
                       optimizer, max_run_time, snapshot_name)
     trainer.train()
-    destroy_process_group() # cleans up after multigpu training
+    destroy_process_group()  # cleans up after multigpu training
 
 
 if __name__ == "__main__":

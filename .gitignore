@@ -1,7 +1,6 @@
 **/*.JPEG
 **/*.zip
 EC2.pem
-presentation_stuff
 saved_trained_output/eight_nodes.pt
 saved_trained_output/two_nodes.pt
 saved_trained_output/one_node.pt

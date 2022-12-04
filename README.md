@@ -1,19 +1,14 @@
-# __Distributed Machine Learning in PyTorch__  
-***
+> # __Distributed Machine Learning in PyTorch__  
 __This project is intended to explore PyTorch's Distributed ML training capabilities, specifically, the Distributed Data Parallel strategy (DDP).__
 
-  
-file | description
+> ## __Important files__
+file/dir | description
 --- | --- 
 model_tester.ipynb | used for testing trained models
 dataloader_visualization.ipynb | visualizing data
 ddp_trainer.py | trainer class definition for DDP training
 multi_node_trainer.py | driver code for single and multinode training
 scripts/ | used to easily execute training code on EC2 VMs with pytorch's torchrun
-
-
-
-***
 
 > ## __One Worker Script__
 `bash scripts/one_node_train.sh TRAIN_TIME  SAVE_NAME  BATCH_SIZE`
@@ -44,7 +39,37 @@ __See useful_server_commands.txt for more examples. Note, need to configure mast
 `BATCH_SIZE = Batch size per device `
 
 > # __DDP-Enabling Code in PyTorch__
-***
+
+> ### __DDP Setup__
+__Important Import:__  
+`from torch.distributed import init_process_group, destroy_process_group`
+
+__Description:__  
+
+
+
+__Code Snippet:__  
+from `multi_node_trainer.py`
+
+![Dataloader Code](presentation_stuff/distributed_sampler_code.png)
+
+
+> ### __Dataloader Distributed Sampler__
+
+__Important DDP Import: __ 
+`from torch.utils.data.distributed import DistributedSampler`
+
+
+
+Dataloader sampler must be wrapped with `DistributedSampler`.  
+ Imports: `from torch.utils.data.distributed import DistributedSampler`  
+ If `random_split()` is used, a manual seed must also be used to ensure that each worker (GPU) gets the same split of training data and validation data.
+
+
+Code Snippet from `multi_node_trainer.py`
+
+![Dataloader Code](presentation_stuff/distributed_sampler_code.png)
+
 
 
 
@@ -77,7 +102,7 @@ In each experiment, I trained for 2 hours.
 | __Scaling Efficiency__    | xxx     |       |
 | __Best Validation Loss__  | xxx     |       |
 | __Test Loss__             | xxx     |  0.435    | 0.429 
-| __Top1 Test Accuracy__    | 86.90%  | 87.30%    | 87.50%
+| __Top1 Test Accuracy__    | 86.90%  | 87.30%    | 87.50% | 87.50%
 
 ***
 
