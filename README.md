@@ -39,7 +39,6 @@ __See useful_server_commands.txt for more examples. Note, need to configure mast
 `BATCH_SIZE = Batch size per device `
 
 > # __DDP-Enabling Code in PyTorch__
-
 > ### __DDP Setup__
 __Important Import:__  
 `from torch.distributed import init_process_group, destroy_process_group`
