@@ -3,7 +3,7 @@ train_time=${1:-0.25}
 worker_num=${2:-0}
 world_size=${3:-1}
 model_name=${4:-model}
-b_sz=${5:-64}
+b_sz=${5:-32}
 
 
 # multi node training
