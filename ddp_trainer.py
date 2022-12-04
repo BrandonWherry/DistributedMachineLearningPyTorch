@@ -54,7 +54,7 @@ class Trainer:
         if self.train_loss_history:
             self.train_loss = self.train_loss_history[-1]
             self.valid_loss = self.valid_loss_history[-1]
-        # Key DDP Wrapper, this allows Distributed Data Parallel Training on model
+        # Key DDP Wrapper
         self.model = DDP(self.model, device_ids=[self.local_rank])
 
     def _load_snapshot(self, snapshot_path):

@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
-import torch.multiprocessing as mp
+import torch.multiprocessing as mp # Not needed if using torchrun
 from torch.distributed import init_process_group, destroy_process_group
 from torchvision.models import vgg19
 from torchvision import transforms
@@ -17,25 +17,12 @@ from typing import Callable, Tuple
 from math import sqrt
 
 
-def ddp_setup():
-    """Initialzes the backend method for gradient synchronization.
-
-        This setup is a key part in enabling Distributed Data Parallel 
-        training on cuda GPUs. Use 'nccl' for cuda GPUs. init_process_group() 
-        creates 1 process per GPU (if specified via torchrun argument). Torchrun 
-        creates a subprocess for each participating GPU, and assigns many 
-        environmental variables for hte user to use, and for torchrun to coordinate
-        training with all participating workers.
-
-    """
-    init_process_group(backend="nccl")
-
-
 def create_train_objs() -> Tuple[torch.nn.Module, Callable, torch.optim.Optimizer]:
     """Used to instantiate 3 training objects. Model, loss_func, and Optimizer
 
     Returns:
-        Tuple[torch.nn.Module, Callable, torch.optim.Optimizer]: tuple of model, Loss Function, and Optimizer
+        Tuple[torch.nn.Module, Callable, torch.optim.Optimizer]: 
+        tuple of model, Loss Function, and Optimizer
     """
     model = vgg19(weights='IMAGENET1K_V1')
     # Replacing classifier with only 20 outputs (from 1000)
@@ -102,24 +89,33 @@ def create_dataloaders(batch_size: int, data_path: str
     return train_loader, valid_loader
 
 
-def main(max_run_time: float, batch_size: int, snapshot_name: str, data_path='data/train'):
-    ddp_setup()
+def main(max_run_time: float, batch_size: int,
+         snapshot_name: str, data_path='data/train'):
+
+    # creates 1 subprocess for each gpu, "nccl" for cuda GPUs
+    # must be used in conjunction with torchrun
+    init_process_group(backend="nccl")
+
+    # training setup that will be performed by each gpu in cluster
     train_data, valid_data = create_dataloaders(batch_size, data_path)
     model, loss_func, optimizer = create_train_objs()
     trainer = Trainer(model, train_data, valid_data, loss_func,
                       optimizer, max_run_time, snapshot_name)
     trainer.train()
-    destroy_process_group()  # cleans up after multigpu training
+
+    # cleans up all subprocesses
+    destroy_process_group()
 
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(description='distributed training job')
     parser.add_argument('--train_time', default=0.5, type=float,
                         help='How long do you want to train, in hours (default 30 minutes)')
     parser.add_argument('--model_name', default='model_snapshot.pt',
                         help='Input the save name of model (default: model_snapshot.pt)')
-    parser.add_argument('--batch_size', default=64, type=int,
+    parser.add_argument('--batch_size', default=32, type=int,
                         help='Input batch size on each device (default: 64)')
     args = parser.parse_args()
 
