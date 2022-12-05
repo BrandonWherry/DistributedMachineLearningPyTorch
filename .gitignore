@@ -1,4 +1,4 @@
 **/*.zip
-**/*.JPEG
+data/train/*
 EC2.pem
 __pycache__
