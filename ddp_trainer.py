@@ -13,6 +13,7 @@ import numpy as np
 from torch.nn.parallel import DistributedDataParallel as DDP
 from math import sqrt
 
+
 class Trainer:
     """Trainer Class to assist with DDP training
     """
