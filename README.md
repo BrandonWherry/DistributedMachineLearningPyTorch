@@ -1,13 +1,14 @@
 > # __Distributed Machine Learning in PyTorch__  
 __This project is intended to explore PyTorch's Distributed ML training capabilities, specifically, the Distributed Data Parallel strategy (DDP).__  
-Disclaimer: You will not be able to run this code directly as it depends on a large dataset that is not in this repo (a 20 class slice of https://www.kaggle.com/datasets/ambityga/imagenet100). You will need to make adjustments to the repo code in order to fit your dataset. If you are using this repo directly, I recommend placing your training data into `data/train` and testing data into `data/test`. The main purpose of this repo is to provide example code of how to perform DDP with PyTorch. I will also be exploring PyTorch's model parallelism approach in the future.  
-PyTorch Reference: https://pytorch.org/docs/stable/index.html
+Disclaimer: You will not be able to run this code directly as it depends on a large dataset that is not in this repo (a 20 class slice of https://www.kaggle.com/datasets/ambityga/imagenet100). I was able to upload 4 trained models using git lfs, so that `model_results.ipynb` can be executed locally, but the actual training took place on EC2 instances.
+
+
 
 
 > ## __Important files__  
 file/dir | description  
 --- | --- 
-model_tester.ipynb | used for testing trained models  
+model_results.ipynb | used for testing trained models and calculating results 
 dataloader_visualization.ipynb | visualizing data  
 ddp_trainer.py | trainer class definition for DDP training  
 multi_node_trainer.py | driver code for single and  multinode training  
@@ -86,51 +87,73 @@ __Trainer Import:__
 __Description:__  
 Trainer class to assist with DDP training. It provides built-in snapshotting that allows for fault tolerant training sessions. This simply means that if one worker fails during training, the training can be restarted and the latest snapshot will be loaded in on each worker to continue training. All metrics that are related to the state of training, such as run time, epoch number, loss histories, and the model state with the best validation loss (and more) are automatically loaded back in after a training failure has occurred.  
 __Snapshotting Code:__   
-from `ddp.py`  
-![Dataloader Code](presentation_stuff\distributed_sampler_code.png)
+>checkpoint saves  
+
+![save snapshot](presentation_stuff/save_snapshot.png)  
+
+>checkpoint loads  
+   
+![load snapshot](presentation_stuff/load_snapshot.png)  
+
+>checkpoint load condition  
+
+![if snapshot](presentation_stuff/load_condition.png)  
+
+>saving final training metrics  
+
+![end metrics](presentation_stuff/saved_metrics.png)  
 
 
 
 > # __Model & Data__
+For testing, I used a modified VGG19 model (replaced classifier to output 20 classes instead of 1000), and trained it on a 20 class slice of imageNet. I started the encoder with pretrained weights, but left them unfrozen to make sure that all gradients need to be calculated.  
+__Exact model creation code given below:__
+![Model Code](presentation_stuff/vgg_model.png)
 
 
 
 > # __AWS EC2 Experiment Details__
-For PyTorch DDP testing I trained the same model with the same data on 1, 2, 4, and 8 AWS EC2 instances.
-
+For PyTorch DDP testing I trained the same model with the same data on 1, 2, 4, and 8 AWS EC2 instances.  
 Instance Type | __g4dn.2xlarge - 8 vCPUs - 1 Nvidia T4 GPU__
 ---|---
-__Network Speed__ | __25 GB/s__
-
-In each experiment, I trained for 2 hours.
+__Network Speed__ | __25 GB/s__  
 
 
+In each experiment, I trained for 2 hours.  
+__AMI:__
+![AMI](presentation_stuff/ami.png)  
+__All EC2 nodes:__
+![EC2](presentation_stuff/8GPUinstances.png)  
 
 > # __My Results with Pytorch's DDP Strategy__
 Note: Each Node has 1 GPU
 
-|                           | 1 Node  | 2 Nodes | 4 Nodes | 8 Nodes |
-|      ---                  |     --- | ---     | ---     |   ---   |
-| __Learning Rate (e-4)__   | 1.00    | 1.41    | 2.00 | 2.83 |
-| __Global Batch Size__     | 32      |  64     | 128 | 256 |
-| __Steps Per Epoch__       | 650     | 375     | 163 | 82 |
-| __Avg Epoch Time(min)__   | xxx     |         |
-| __Epoch Num @ 2 hr__      | xxx     |         |
-| __Images Per Sec__        | xxx     |       |
-| __Scaling Efficiency__    | xxx     |       |
-| __Best Validation Loss__  | xxx     |       |
-| __Test Loss__             | xxx     |  0.435    | 0.429 
-| __Top1 Test Accuracy__    | 86.90%  | 87.30%    | 87.50% | 87.50%
+|                           | 1 Node   | 2 Nodes   | 4 Nodes | 8 Nodes |
+|      ---                  |   ---    |   ---     |   ---   |   ---   |
+| __Learning Rate (e-4)__   | 1.00     |   1.41    |  2.00   |  2.83   |
+| __Global Batch Size__     |   32     |     64    |   128   |   256   |
+| __Steps Per Epoch__       |  650     |    375    |   163   |    82   |
+| __Avg Epoch Time(min)__   | 8.76     |   5.40    |  3.35   |  2.37   |
+| __Epoch Num @ 2 hr__      |   14     |     23    |    36   |    54   |
+| __Scaling Efficiency__    |  1.00    |   0.81    |   0.65  |  0.46   |
+| __Best Validation Loss__  | 0.3795   |  0.3646   | 0.3558  | 0.3522  |
+| __Test Loss__             | 0.4485   |  0.4351   | 0.4286  | 0.4287  |
+| __Top1 Test Accuracy__    | 86.90%   |  87.30%   | 87.50%  | 87.50%  |
 
-***
+
 
 
 ># __Cool Summary Graphs__
+![Train Loss](presentation_stuff/TrainingLoss.png)
+![Valid Loss](presentation_stuff/ValidationLoss.png)
+
 
 
 
 ># __Conclusions on Distributed Training with Pytorch's DDP Strategy__
 
 __Scale up before scaling out!__ 
+
+As we can see from the above two graphs, the rate of training was not much improved (if at all) as the number of nodes increased. Theoretically, training times should be less if the right balance of learning rates, and batch sizes are found.
 
 Depending on network speeds, it is very likely that the communication overhead caused by gradient synchronization between nodes will decrease scaling efficiency as the number of workers increases. I recommend connections that exceed 100GB/s, but even those kinds of speeds do no compare to linked GPU transfer speeds. Because of this, I recommend to perform training on multi GPU systems. It's clear that 1 system with 8 GPUs is better than 8 systems with 1 GPU (not certain, but I think this is likely to be hte case). If scaling beyond just 1 system with 8 GPUs, then one can add additional nodes. This may seem obvious, but it wasn't so obvious to me until this experiment (mostly because 8 nodes are likely to have 8x the number of cpu cores, and it's hard to know just how much those CPU extra CPU cores factor in). More testing will be conducted in the future.
