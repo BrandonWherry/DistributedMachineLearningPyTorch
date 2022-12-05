@@ -119,9 +119,9 @@ __Network Speed__ | __25 GB/s__
 
 
 In each experiment, I trained for 2 hours.  
-__AMI:__
+__AMI:__  
 ![AMI](presentation_stuff/ami.png)  
-__All EC2 nodes:__
+__All EC2 nodes:__  
 ![EC2](presentation_stuff/8GPUinstances.png)  
 
 > # __My Results with Pytorch's DDP Strategy__
