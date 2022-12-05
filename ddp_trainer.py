@@ -1,8 +1,5 @@
 """Trainer Module to assist with Distributed Data Parallel Training (DDP).
 
-    Built off of official pytorch documentation from ->
-
-
 """
 import os
 import torch
