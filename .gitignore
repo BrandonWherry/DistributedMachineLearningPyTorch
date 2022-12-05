@@ -1,4 +1,4 @@
-**/*.JPEG
 **/*.zip
+**/*.JPEG
 EC2.pem
 __pycache__
