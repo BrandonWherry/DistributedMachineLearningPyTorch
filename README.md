@@ -67,7 +67,7 @@ __Description:__
 Distributed Sampler that coordinates batch sampling across the cluster. It ensures that each GPU gets different batchs of data.    
 __Code:__   
 from `multi_node_trainer.py`  
-![Dataloader Code](presentation_stuff\distributed_sampler_code.png)
+![Dataloader Code](presentation_stuff/distributed_sampler.png)
 
 
 > ## __Model Wrapper__  
